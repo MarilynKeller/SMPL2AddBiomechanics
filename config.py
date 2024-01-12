@@ -1,0 +1,1 @@
+smpl_folder = 'models/'
