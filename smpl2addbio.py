@@ -8,7 +8,7 @@ import tqdm
 from markers.smpl_markers import SmplMarker
 
 from measurements.measurements import BodyMeasurements
-from smpl_utils import SMPL, load_smpl_seq
+from smpl_utils import SMPL, load_smpl_seq, smpl_model_fwd
 
 def create_subj_json_and_mesh(smpl_data):
     
@@ -54,8 +54,29 @@ def create_data_folder(subject_name, subject_trials, output_folder, force_recomp
     print('Subject measurements saved as {}'.format(subject_json_file))
     
     smpl_model = SMPL(gender = seq_data['gender'])
+    
+    # Generate an BSM model with the corresponding markers
+    osso_folder = os.path.join(subject_folder, 'osso')
 
-    # Populate trial folder
+    # Add vertices and face to seq_data
+    verts = smpl_model_fwd(smpl_model, seq_data)
+    faces = smpl_model.faces_tensor
+    seq_data.update({'verts': verts, 'faces': faces})
+    
+    from osso.utils.fit_osso import fit_osso
+    osso_data = fit_osso(seq_data, osso_folder, display=True)
+    #     cmd = f"cd {cg.osso_code_root} && {cg.python_interpretor} {align_script} -i {amass_seq_npz} -D  --subj_only"
+    # print(f'Executing {cmd} ...')
+    # os.system(cmd)
+    # os.system(f'cd {cg.code_tml_root + "tml_skel"}')
+    # pickle.dump(osso_data, open(osso_file, 'wb'))
+
+    # markers_dict = smpl_manual_markers
+    # sos = Smpl2osim.from_files(markers_dict, osim_model_path, marker_set_name=marker_set_name)   
+    # sos.generate_osim(smpl_mesh_path=smpl_mesh_path, osso_mesh_path=osso_mesh_path, output_osim_path=output_osim_path, display=display)
+
+
+    # Populate trial folder with synthetic mocap
     for seq in tqdm.tqdm(subject_trials):
         
         seq_name = seq.split('/')[-1].split('.')[0]
@@ -80,7 +101,9 @@ def create_data_folder(subject_name, subject_trials, output_folder, force_recomp
             print(f'Generated synthetic markers as {synth_mocap_file}.')
         else:
             print(f'Synthetic markers already exist at {synth_mocap_file}. Not recomputing.')
-
+            
+  
+    
 
 
 def list_trials(smpl_seq_folder):
@@ -90,6 +113,7 @@ def list_trials(smpl_seq_folder):
         if trial.endswith('.npz') or trial.endswith('.pkl'):
             trials.append(os.path.join(smpl_seq_folder, trial))
     return trials
+
 
 if __name__ == '__main__':
 
@@ -108,4 +132,3 @@ if __name__ == '__main__':
     print(f"Found {len(subject_trials)} trials for subject {subject_name}")
     
     create_data_folder(subject_name, subject_trials, args.output_folder, force_recompute=args.force_recompute)
-    

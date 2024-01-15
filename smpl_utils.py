@@ -6,7 +6,7 @@ import torch
 import smplx
 import config as cg
 
-def load_smpl_seq(smpl_seq_path):
+def load_smpl_seq(smpl_seq_path, include_verts=False):
 
     if not os.path.exists(smpl_seq_path):
         raise Exception('Path does not exist: {}'.format(smpl_seq_path))
@@ -39,7 +39,7 @@ def load_smpl_seq(smpl_seq_path):
     
     if "mocap_framerate" in data_dict.keys():
         out_dict['fps'] = data_dict['mocap_framerate']
-    
+        
     return out_dict
 
 
