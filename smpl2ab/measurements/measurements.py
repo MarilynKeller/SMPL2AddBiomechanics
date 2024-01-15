@@ -61,9 +61,8 @@ class BodyMeasurements:
         ''' Compute the height using the heel and the top of the head
         Code adapted from Lea Muller, lea.muller@tuebingen.mpg.de
         '''
-
-        meas_vertices_path = 'measurements/smpl_measurement_vertices.yaml'
-        with open(meas_vertices_path, 'r') as f:
+        
+        with open(cg.mesh_vertices_path, 'r') as f:
             meas_vertices = yaml.safe_load(f)
 
         head_top = meas_vertices['HeadTop']

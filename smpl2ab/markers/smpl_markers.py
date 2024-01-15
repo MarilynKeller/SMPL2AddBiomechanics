@@ -1,5 +1,5 @@
 import numpy as np
-from smpl_utils import smpl_model_fwd
+from utils.smpl_utils import smpl_model_fwd
 import nimblephysics as nimble
 
 class SmplMarker():
@@ -33,16 +33,9 @@ class SmplMarker():
         nimble.biomechanics.OpenSimParser.saveTRC(path, timestamps, markerTimesteps)
         
     @classmethod
-    def from_smpl_data(cls, smpl_data, marker_set, smpl_model, fps=None):
+    def from_smpl_data(cls, smpl_data, marker_set_name, markers_dict, smpl_model, fps=None):
         """ Create a marker sequence from a SMPL sequence"""
         
-        # Select the marker set to use
-        if marker_set == "bsm":
-            from markers.marker_sets import bsm_marker_set
-            markers_dict = bsm_marker_set
-        else:
-            raise ValueError(f"Unknown marker set: {marker_set}. To create a new marker set, add it as a dictionary in smpl_marker_dict.py")
-
         # FPS for the sequence
         if fps is None and "fps" in smpl_data.keys():
             fps = smpl_data['fps']
@@ -55,5 +48,5 @@ class SmplMarker():
         # Per frame SMPL vertices to generate the markers from
         verts = smpl_model_fwd(smpl_model, smpl_data)
 
-        return cls(verts, markers_dict, fps, name=marker_set)
+        return cls(verts, markers_dict, fps, name=marker_set_name)
     

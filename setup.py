@@ -9,7 +9,7 @@ requirements =[
 ]
 
 setup(
-    name="smpl2addbio",
+    name="smpl2ab",
     version="0.1",
     description=("Generating input data for [AddBiomechanics](https://addbiomechanics.org/) from SMPL sequences."),
     author="Marilyn Keller",

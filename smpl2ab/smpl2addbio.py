@@ -2,13 +2,14 @@ import argparse
 import json
 import os
 import pickle
-import sys
-import numpy as np
 import tqdm
-from markers.smpl_markers import SmplMarker
 
-from measurements.measurements import BodyMeasurements
-from smpl_utils import SMPL, load_smpl_seq, smpl_model_fwd
+from smpl2ab.markers.smpl2osim import Smpl2osim
+from smpl2ab.markers.smpl_markers import SmplMarker
+import smpl2ab.config as cg
+
+from smpl2ab.measurements.measurements import BodyMeasurements
+from smpl2ab.utils.smpl_utils import SMPL, load_smpl_seq, smpl_model_fwd
 
 def create_subj_json_and_mesh(smpl_data):
     
@@ -28,7 +29,7 @@ def create_subj_json_and_mesh(smpl_data):
     return subject_json
 
 
-def create_data_folder(subject_name, subject_trials, output_folder, force_recompute=False, marker_set='bsm'):
+def create_data_folder(subject_name, subject_trials, output_folder, force_recompute=False, marker_set_name='bsm'):
     """ Create the AdBiomechanics input data folder for a SMPL subject.
     Those data can be feed into AddBiomechanics to align an OpenSim Skeleton model to it.
     @param subject_name: name of the subject
@@ -55,30 +56,35 @@ def create_data_folder(subject_name, subject_trials, output_folder, force_recomp
     
     smpl_model = SMPL(gender = seq_data['gender'])
     
+    # Select the marker set to use
+    if marker_set_name == "bsm":
+        from markers.marker_sets import bsm_marker_set
+        markers_dict = bsm_marker_set
+        osso_segmentation = cg.bsm_osso_segmentation
+    else:
+        raise ValueError(f"Unknown marker set: {marker_set_name}. To create a new marker set, add it as a dictionary in smpl_marker_dict.py")
+    
     # Generate an BSM model with the corresponding markers
     osso_folder = os.path.join(subject_folder, 'osso')
-
-    # Add vertices and face to seq_data
-    verts = smpl_model_fwd(smpl_model, seq_data)
-    faces = smpl_model.faces_tensor
-    seq_data.update({'verts': verts, 'faces': faces})
-    
-    from osso.utils.fit_osso import fit_osso
-    print('Fitting OSSO model to the SMPL mesh...')
-    # This fit will be used to deduce the personalized offset between the bones and the skin markers
-    osso_data = fit_osso(seq_data, osso_folder, display=True)
-    #     cmd = f"cd {cg.osso_code_root} && {cg.python_interpretor} {align_script} -i {amass_seq_npz} -D  --subj_only"
-    # print(f'Executing {cmd} ...')
-    # os.system(cmd)
-    # os.system(f'cd {cg.code_tml_root + "tml_skel"}')
-    # pickle.dump(osso_data, open(osso_file, 'wb'))
     osso_mesh_path = os.path.join(osso_folder, 'skel_lying.ply')
     smpl_mesh_path = os.path.join(osso_folder, 'star_lying.ply') # smpl and star have the same mesh topology so they can be used interchangeably
-    assert os.path.exists(osso_mesh_path), f'Could not find {osso_mesh_path}'
-    assert os.path.exists(smpl_mesh_path), f'Could not find {smpl_mesh_path}'
+    if not os.path.exists(osso_mesh_path):
+
+        # Add vertices and face to seq_data
+        verts = smpl_model_fwd(smpl_model, seq_data)
+        faces = smpl_model.faces_tensor
+        seq_data.update({'verts': verts, 'faces': faces})
+        
+        from osso.utils.fit_osso import fit_osso
+        print('Fitting OSSO model to the SMPL mesh...')
+        # This fit will be used to deduce the personalized offset between the bones and the skin markers
+        fit_osso(seq_data, osso_folder, display=True)
+        assert os.path.exists(osso_mesh_path), f'Could not find {osso_mesh_path}'
+        assert os.path.exists(smpl_mesh_path), f'Could not find {smpl_mesh_path}'
 
     # markers_dict = smpl_manual_markers
-    # sos = Smpl2osim.from_files(markers_dict, osim_model_path, marker_set_name=marker_set_name)   
+    osim_model_path = cg.bsm_model_path
+    # sos = Smpl2osim.from_files(markers_dict, osim_model_path, osso_segmentation, marker_set_name=marker_set_name)   
     # sos.generate_osim(smpl_mesh_path=smpl_mesh_path, osso_mesh_path=osso_mesh_path, output_osim_path=output_osim_path, display=display)
 
 
@@ -99,7 +105,7 @@ def create_data_folder(subject_name, subject_trials, output_folder, force_recomp
             # Load the SMPL sequence as a dictionary
             seq_data = load_smpl_seq(seq)
             
-            synthetic_markers = SmplMarker.from_smpl_data(smpl_data=seq_data, marker_set=marker_set, smpl_model=smpl_model)
+            synthetic_markers = SmplMarker.from_smpl_data(smpl_data=seq_data, marker_set_name=marker_set_name, smpl_model=smpl_model)
             synthetic_markers.save_trc(synth_mocap_file)
             pickle.dump(synthetic_markers, open(synth_mocap_file, 'wb'))
             del synthetic_markers
