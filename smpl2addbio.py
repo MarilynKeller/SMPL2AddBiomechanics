@@ -64,12 +64,18 @@ def create_data_folder(subject_name, subject_trials, output_folder, force_recomp
     seq_data.update({'verts': verts, 'faces': faces})
     
     from osso.utils.fit_osso import fit_osso
+    print('Fitting OSSO model to the SMPL mesh...')
+    # This fit will be used to deduce the personalized offset between the bones and the skin markers
     osso_data = fit_osso(seq_data, osso_folder, display=True)
     #     cmd = f"cd {cg.osso_code_root} && {cg.python_interpretor} {align_script} -i {amass_seq_npz} -D  --subj_only"
     # print(f'Executing {cmd} ...')
     # os.system(cmd)
     # os.system(f'cd {cg.code_tml_root + "tml_skel"}')
     # pickle.dump(osso_data, open(osso_file, 'wb'))
+    osso_mesh_path = os.path.join(osso_folder, 'skel_lying.ply')
+    smpl_mesh_path = os.path.join(osso_folder, 'star_lying.ply') # smpl and star have the same mesh topology so they can be used interchangeably
+    assert os.path.exists(osso_mesh_path), f'Could not find {osso_mesh_path}'
+    assert os.path.exists(smpl_mesh_path), f'Could not find {smpl_mesh_path}'
 
     # markers_dict = smpl_manual_markers
     # sos = Smpl2osim.from_files(markers_dict, osim_model_path, marker_set_name=marker_set_name)   
@@ -103,8 +109,6 @@ def create_data_folder(subject_name, subject_trials, output_folder, force_recomp
             print(f'Synthetic markers already exist at {synth_mocap_file}. Not recomputing.')
             
   
-    
-
 
 def list_trials(smpl_seq_folder):
     """ Given a folder containing SMPL sequences, list the sequences paths """
