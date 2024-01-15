@@ -4,7 +4,7 @@ import os
 package_directory = os.path.dirname(os.path.abspath(__file__))
 
 smpl_folder = os.path.join(package_directory, '../models')
-bsm_model_path = os.path.join(package_directory, '../models/osim_model.osim')
+bsm_model_path = os.path.join(package_directory, '../models/bsm.osim')
 
 # Do not edit the following lines
 

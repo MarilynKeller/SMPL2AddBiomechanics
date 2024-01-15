@@ -60,8 +60,10 @@ def create_data_folder(subject_name, subject_trials, output_folder, force_recomp
     if marker_set_name == "bsm":
         from markers.marker_sets import bsm_marker_set
         markers_dict = bsm_marker_set
-        osso_segmentation = cg.bsm_osso_segmentation
+        osso_segmentation = pickle.load(open(cg.bsm_osso_segmentation, 'rb'))
+        rigging_method = 'gt'
     else:
+        rigging_method = 'closest_rj_bone'
         raise ValueError(f"Unknown marker set: {marker_set_name}. To create a new marker set, add it as a dictionary in smpl_marker_dict.py")
     
     # Generate an BSM model with the corresponding markers
@@ -84,8 +86,9 @@ def create_data_folder(subject_name, subject_trials, output_folder, force_recomp
 
     # markers_dict = smpl_manual_markers
     osim_model_path = cg.bsm_model_path
-    # sos = Smpl2osim.from_files(markers_dict, osim_model_path, osso_segmentation, marker_set_name=marker_set_name)   
-    # sos.generate_osim(smpl_mesh_path=smpl_mesh_path, osso_mesh_path=osso_mesh_path, output_osim_path=output_osim_path, display=display)
+    assert os.path.exists(osim_model_path), f'Could not find {osim_model_path}'
+    sos = Smpl2osim.from_files(markers_dict, osim_model_path, osso_segmentation, marker_set_name=marker_set_name, rigging_method=rigging_method)   
+    # sos.generatse_osim(smpl_mesh_path=smpl_mesh_path, osso_mesh_path=osso_mesh_path, output_osim_path=output_osim_path, display=display)
 
 
     # Populate trial folder with synthetic mocap

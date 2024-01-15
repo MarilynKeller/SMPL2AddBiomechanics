@@ -33,8 +33,6 @@ class Smpl2osim:
         self.rigging_method = rigging_method
         self.mapping_method = mapping_method
 
-        
-        # import ipdb; ipdb.set_trace()
         osim_node_names = [n.getName() for n in osim.skeleton.getBodyNodes()]
         osim_node_names.sort()
         
