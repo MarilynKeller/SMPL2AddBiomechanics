@@ -4,7 +4,7 @@ requirements =[
     "numpy",
     "torch",
     "smplx",
-    "nimblephysics",
+    "nimblephysics==0.10.32",
     "tqdm",
     "rtree",
 ]

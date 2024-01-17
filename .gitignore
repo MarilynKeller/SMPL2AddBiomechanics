@@ -1,3 +1,5 @@
 output/
 models/
 *__pycache__/
+imgui.ini
+*.egg-info/
