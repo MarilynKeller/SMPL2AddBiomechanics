@@ -1,4 +1,4 @@
-from aitviewer.utils import vertex_colors_from_weights
+from aitviewer.utils.colors import vertex_colors_from_weights
 import numpy as np
 
 # osim_markers_color = ()

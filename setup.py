@@ -6,6 +6,7 @@ requirements =[
     "smplx",
     "nimblephysics",
     "tqdm",
+    "rtree",
 ]
 
 setup(

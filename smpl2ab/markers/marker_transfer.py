@@ -1,36 +1,30 @@
 import argparse
 import logging
 import os
-
-from matplotlib.pyplot import bone, close
 import numpy as np
-
-from smpl2ab.utils.colors import skin_mesh_color
-
 import trimesh
+import pickle as pkl
 
 from aitviewer.renderables.meshes import Meshes
 from aitviewer.viewer import Viewer
-import pickle as pkl
 
-from tml_utils.mapping import apply_mapping, apply_mapping_barycentric, compute_mapping, compute_mapping_barycentric
-import tml_config as cg
-
-from aitviewer.utils import vertex_colors_from_weights
-from tml_utils.osim_aug import OsimAug
-
-from tml_utils.osso import get_osso_submesh_util 
-from tml_utils.smpl import load_mean_smpl
-from kin_models.kinosim_fused import smpl2osim_corresp
+from smpl2ab.markers.mapping import apply_mapping, apply_mapping_barycentric, compute_mapping, compute_mapping_barycentric
+from smpl2ab.utils.osim_aug import OsimAug
+from smpl2ab.utils.colors import skin_mesh_color, vertex_colors_from_weights
+from smpl2ab.utils.osso import get_osso_submesh_util 
+from smpl2ab.utils.smpl import load_mean_smpl
+from smpl2ab.utils.kinosim_fused import smpl2osim_corresp
 from aitviewer.models.smpl import SMPLLayer
 from aitviewer.renderables.markers import Markers
+
+import config as cg
 
 def flatten(l):
     return [item for sublist in l for item in sublist]
 
 class SSMarkerTransfer():
 
-    osso_rj_segmentation = cg.osso_segmentation 
+    osso_rj_segmentation = cg.bsm_osso_segmentation 
     output_folder = cg.smpl_markers_folder
 
     def __init__(self, markers_p, osso_p, osso_rj, markers_label, skin_indices, mapping_method, rigging_method):
@@ -57,7 +51,7 @@ class SSMarkerTransfer():
         self.mapping_method = mapping_method
         self.rigging_method = rigging_method
 
-        self.osso_rj_seg = pkl.load(open(cg.osso_segmentation, 'rb'))
+        self.osso_rj_seg = pkl.load(open(cg.bsm_osso_segmentation, 'rb'))
         
         self._femur_demo_cache = {'bone': 'femur_l'} # Store the femur mesh and associated markers
 
@@ -354,7 +348,6 @@ class SSMarkerTransfer():
         print(self._femur_demo_cache['marker_indices'])
         demo_bone_mesh = self._femur_demo_cache['mesh']
         demo_bone_marker_indices = self._femur_demo_cache['marker_indices']
-        import ipdb; ipdb.set_trace()
         
         disp_offset = 1*dx
         markers_labels_demo = [f'{i}' for i in demo_bone_marker_indices]

@@ -2,8 +2,9 @@ import pickle
 import numpy as np
 
 import trimesh
-# from markers.marker_transfer import SSMarkerTransfer
+from markers.marker_transfer import SSMarkerTransfer
 import nimblephysics as nimble
+import config as cg
 
 class Smpl2osim:
     

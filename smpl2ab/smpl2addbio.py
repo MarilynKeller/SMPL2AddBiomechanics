@@ -29,7 +29,7 @@ def create_subj_json_and_mesh(smpl_data):
     return subject_json
 
 
-def create_data_folder(subject_name, subject_trials, output_folder, force_recompute=False, marker_set_name='bsm'):
+def create_data_folder(subject_name, subject_trials, output_folder, force_recompute=False, marker_set_name='bsm', display=True):
     """ Create the AdBiomechanics input data folder for a SMPL subject.
     Those data can be feed into AddBiomechanics to align an OpenSim Skeleton model to it.
     @param subject_name: name of the subject
@@ -85,10 +85,11 @@ def create_data_folder(subject_name, subject_trials, output_folder, force_recomp
         assert os.path.exists(smpl_mesh_path), f'Could not find {smpl_mesh_path}'
 
     # markers_dict = smpl_manual_markers
-    osim_model_path = cg.bsm_model_path
+    osim_model_path = cg.osim_model_path
     assert os.path.exists(osim_model_path), f'Could not find {osim_model_path}'
     sos = Smpl2osim.from_files(markers_dict, osim_model_path, osso_segmentation, marker_set_name=marker_set_name, rigging_method=rigging_method)   
-    # sos.generatse_osim(smpl_mesh_path=smpl_mesh_path, osso_mesh_path=osso_mesh_path, output_osim_path=output_osim_path, display=display)
+    output_osim_path = os.path.join(subject_folder, 'bsm.osim')
+    sos.generate_osim(smpl_mesh_path=smpl_mesh_path, osso_mesh_path=osso_mesh_path, output_osim_path=output_osim_path, display=display)
 
 
     # Populate trial folder with synthetic mocap
