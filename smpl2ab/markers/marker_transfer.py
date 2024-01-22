@@ -1,22 +1,23 @@
+# Copyright (C) 2024  Max Planck Institute for Intelligent Systems Tuebingen, Marilyn Keller 
+
 import argparse
 import logging
 import os
-import sys
 import numpy as np
 import trimesh
 import pickle as pkl
 
 from aitviewer.renderables.meshes import Meshes
 from aitviewer.viewer import Viewer
-
-from smpl2ab.markers.mapping import apply_mapping, apply_mapping_barycentric, compute_mapping, compute_mapping_barycentric
-from smpl2ab.utils.osim_aug import OsimAug
-from smpl2ab.utils.colors import skin_mesh_color, vertex_colors_from_weights
-from smpl2ab.utils.osso import get_osso_submesh_util 
-from smpl2ab.utils.smpl import load_mean_smpl
-from smpl2ab.utils.kinosim_fused import smpl2osim_corresp
 from aitviewer.models.smpl import SMPLLayer
 from aitviewer.renderables.markers import Markers
+from aitviewer.utils.colors import vertex_colors_from_weights
+
+from smpl2ab.markers.mapping import apply_mapping, apply_mapping_barycentric, compute_mapping, compute_mapping_barycentric
+from smpl2ab.utils.osso import get_osso_submesh_util 
+from smpl2ab.utils.smpl import load_mean_smpl
+from smpl2ab.utils.osim_aug import OsimAug
+from smpl2ab.utils.kinosim_fused import smpl2osim_corresp
 
 import config as cg
 
@@ -77,9 +78,8 @@ class SSMarkerTransfer():
             self.mesh_tri_index, self.baricentric_verts_coords = compute_mapping_barycentric(self.markers_p, self.osso_p) 
  
             # TEST
-            m_rec = apply_mapping_barycentric(self.baricentric_verts_coords, self.mesh_tri_index, self.osso_p)
+            # m_rec = apply_mapping_barycentric(self.baricentric_verts_coords, self.mesh_tri_index, self.osso_p)
             # assert(np.linalg.norm(m_rec - self.markers_p))
-            # import ipdb; ipdb.set_trace()
             self.markers_rj = apply_mapping_barycentric(self.baricentric_verts_coords, self.mesh_tri_index, self.osso_rj)
             self.markers_rj[:, [0,2]] = self.markers_rj[:, [2,0]]
             self.markers_rj[:, 2] = -self.markers_rj[:, 2]
@@ -119,9 +119,6 @@ class SSMarkerTransfer():
 
                 submesh, submesh_global_faces_index = self.get_osso_submesh(bone_name)
 
-                # if bone_name == 'toes_l':
-                #     import ipdb; ipdb.set_trace()
-
                 # Compute mapping to go from this bone triangles to the markers  
                 submesh_tri_index, m_vect_rel = compute_mapping(markers, submesh) 
 
@@ -133,7 +130,6 @@ class SSMarkerTransfer():
                 self.m_vect_rel[markers_mask] = m_vect_rel
                 
                 if bone_name == self._femur_demo_cache['bone']:
-                    # import ipdb; ipdb.set_trace()
                     self._femur_demo_cache['mesh'] = self.get_osso_unposed_submesh(bone_name)[0]
         
             self.markers_rj = self.reconstruct_markers(self.osso_rj, from_osim=False)
@@ -156,7 +152,6 @@ class SSMarkerTransfer():
 
         elif method == 'barycenter':
             m_reconstructed = apply_mapping_barycentric(self.baricentric_verts_coords, self.mesh_tri_index, osso_mesh)
-            # return self.markers_osso_idx, self.markers_triangle_id, self.m_osso_vect_rel
 
         elif method in ['relative', 'per_part']:
             m_reconstructed = apply_mapping(self.mesh_tri_index, self.m_vect_rel, osso_mesh)
@@ -176,13 +171,11 @@ class SSMarkerTransfer():
         """
         For each skin marker, pick the closest osso vertex. loook in a precomputed dict 
         to which rajagopal bone this vertex corresponds, then rig the marker to this bone
-        
         """
         
         # Load osso segmentation into RJ bones, this segmentation was created with blender
         vertex_rigging_dict =  pkl.load(open(SSMarkerTransfer.osso_rj_segmentation, 'rb'))
         # logging.info([(k, v) for (k,v) in vertex_rigging_dict.items()])
-        import ipdb; ipdb.set_trace()
         self.markers_osso_d, self.markers_osso_idx  = trimesh.proximity.ProximityQuery(self.osso_p).vertex(self.markers_p) #vertex index on osso
 
         #For each marker and its corresponding vertex on osso
@@ -208,10 +201,8 @@ class SSMarkerTransfer():
         # Load dict mapping smpl bone index to rajagopal bone name
         from auto_markers.rajagopal_smpl_rigging import smpl_to_raj_dict 
         
-
         smpl_layer = SMPLLayer(model_type='smpl', gender='neutral',  device='cpu')
         skining_weights = smpl_layer.bm.lbs_weights.numpy()
-
     
         #For each marker 
         self.markers_rigging = {}
@@ -224,7 +215,6 @@ class SSMarkerTransfer():
             submesh, _ = self.get_osso_submesh(bone_name)
             distance_queries[bone_name] = trimesh.proximity.ProximityQuery(submesh)
         
-        # import ipdb; ipdb.set_trace()
         # iterate through (marker_coords, index in smpl, marker label)
         # m_smpl_pos : 3D coordinates of the marker
         smpl2osim_list = [v for v in smpl2osim_corresp.values()] # smpl2osim_list[0] contains ['pelvis'], this is the list of osim nodes corresponding to smpl joint 0
@@ -232,7 +222,6 @@ class SSMarkerTransfer():
             smpl_bone_index = np.argmax(skining_weights[m_smpl_index]) # Find to which smpl bone the marker is attached
             rajagopal_bone = self.find_rigging(vertex=m_smpl_pos, bone_candidates = smpl2osim_list[smpl_bone_index], bone_candidates_queries=distance_queries) # Get the corresponding rajagopal bone
             self.markers_rigging[m_label] = rajagopal_bone # Rig the marker to the rajagopal bone
-        # import ipdb; ipdb.set_trace()
         [print('\n',(k, v)) for (k,v) in self.markers_rigging.items()]
         
         
@@ -256,12 +245,10 @@ class SSMarkerTransfer():
         if len(bone_candidates) == 1:
             return bone_candidates[0]
         else:
-            # import ipdb; ipdb.set_trace()
             # Among the bone candidates, find the one that is closest to the vertex
             closest_bone = bone_candidates[0]
             closest_bone_dist = +np.inf
             for bone_name in bone_candidates:
-                #bone_proximity_query = trimesh.proximity.ProximityQuery(submesh)
                 bone_proximity_query = bone_candidates_queries[bone_name]
                 _, bone_dist, _ = bone_proximity_query.on_surface(vertex[np.newaxis,:])
                 # print(f"{bone_name} distance: {bone_dist[0]}")
@@ -323,6 +310,8 @@ class SSMarkerTransfer():
 
 
     def visualize(self, smpl_trimesh):
+        
+        skin_mesh_color = (179/255, 120/255, 179/255, 0.5)
 
         reconstructed_p = self.reconstruct_markers(self.osso_p, from_osim=False)
         
@@ -341,9 +330,7 @@ class SSMarkerTransfer():
         
         # Set the color of the markers
         marker_index_colors = vertex_colors_from_weights(weights=range(len(self.markers_p)), scale_to_range_1=True, alpha=1)#[np.newaxis, :, :]
-        # marker_index_colors = list(marker_index_colors)
-        # color=[1, 0, 0, 1]
-    
+
         disp_offset = 0*dx
         smpl_mesh = Meshes(smpl_trimesh.vertices, smpl_trimesh.faces, name='SMPL mesh', position=disp_offset, color = skin_mesh_color)
         osso_mesh = Meshes(self.osso_p.vertices, self.osso_p.faces, name='OSSO mesh', position=disp_offset)
@@ -357,9 +344,7 @@ class SSMarkerTransfer():
          
         markers_pc = Points(self.markers_p[None,...], markers_labels=markers_labels,  position=disp_offset, colors=marker_index_colors, name='Markers on SMPL')
         m_osso_rec_pc = Points(reconstructed_p[None,...], markers_labels=markers_labels, position=disp_offset, colors=marker_index_colors, name='Markers reconstructed from OSSO')
-        
-        
-        
+              
         # Demo bone
         print(self._femur_demo_cache['marker_indices'])
         demo_bone_mesh = self._femur_demo_cache['mesh']
@@ -416,7 +401,6 @@ class SSMarkerTransfer():
 
 
 def get_vertices(smpl_trimesh, marker_set_name):
-    # Todo: make class from that goes fetch the smpl verts indices given a set
 
     if marker_set_name == 'skin_set':
         labels = [f'{i:04d}' for i in range(len(smpl_trimesh.vertices))]
@@ -427,7 +411,6 @@ def get_vertices(smpl_trimesh, marker_set_name):
         smpl_cmu_dict = pkl.load(open(cg.smpl_cmu_file, 'rb'))
         skin_indices = np.hstack(smpl_cmu_dict.values())
         markers_label = [k for k in smpl_cmu_dict.keys()]
-        # import ipdb; ipdb.set_trace()
         return smpl_trimesh.vertices[skin_indices], markers_label, skin_indices
     else:
         raise ValueError(f'Unknown marker set name {marker_set_name}')
@@ -470,7 +453,6 @@ if __name__ == '__main__':
 
     mt = SSMarkerTransfer(markers_p, osso_p, osso_rj, markers_label, skin_indices, rigging_method=args.rigging_method, mapping_method=args.mapping_method)
 
-    # import ipdb; ipdb.set_trace()
     mt.export_correspondances(marker_set_name)
 
     if args.display:

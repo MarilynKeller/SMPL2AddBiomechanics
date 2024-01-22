@@ -1,6 +1,7 @@
+# Copyright (C) 2024  Max Planck Institute for Intelligent Systems Tuebingen, Marilyn Keller 
+
 import numpy as np
 import trimesh
-
 
 def compute_mapping_barycentric(verts, mesh):
     """ 
@@ -157,7 +158,6 @@ def get_submesh(verts, faces, verts_retained=None, faces_retained=None, min_vert
 
     new_faces = faces[bool_faces]
     # just in case additional vertices are added
-    # vertex_ids = list(set(new_faces.ravel())) # This was changing the vertices ordering
     vertex_ids = np.where(vert_mask)[0]
 
     oldtonew = -1 * np.ones([len(verts)])

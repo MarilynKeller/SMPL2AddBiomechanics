@@ -1,13 +1,12 @@
-import pickle
-import numpy as np
+# Copyright (C) 2024  Max Planck Institute for Intelligent Systems Tuebingen, Marilyn Keller 
 
+import numpy as np
 import trimesh
-from markers.marker_transfer import SSMarkerTransfer
 import nimblephysics as nimble
+
+from smpl2ab.markers.marker_transfer import SSMarkerTransfer
+from smpl2ab.markers.osim_editor import OsimEditor, visualize_osim
 import config as cg
-from smpl2ab.markers.osim_editor import OsimEditor
-from aitviewer.renderables.osim import OSIMSequence
-from aitviewer.viewer import Viewer
 
 class Smpl2osim:
     
@@ -43,14 +42,13 @@ class Smpl2osim:
         # Check that the segmentation is valid
         for k in osso_segmentation.keys():
             if k not in osim_node_names:
-                print(f'ERROR: Segmentation of OSSO contains {k}, which is not a bone in the osim model. Osim bones are: {[bone for bone in osim_node_names]}')               
-                continue
+                # print(f'ERROR: Segmentation of OSSO contains {k}, which is not a bone in the osim model. Osim bones are: {[bone for bone in osim_node_names]}')               
+                # continue
                 raise ValueError(f'Segmentation of OSSO contains "{k}", which is not a bone in the osim model. Osim bones are: {[bone for bone in osim_node_names]}')                
                 
         print(f'Marker numbers = {len(self.smpl_marker_dict)}')
         print(f'Osim model bones = {osim_node_names}')
-        
-        
+              
     @classmethod
     def from_files(cls, smpl_marker_dict:dict, osim_model_path:str, osso_segmentation:str, **kwargs) -> 'Smpl2osim':
     
@@ -60,7 +58,6 @@ class Smpl2osim:
    
     def generate_osim(self, smpl_mesh_path, osso_mesh_path, output_osim_path, display=False):
 
-        # Todo, pick a per gender mean body or target body
         # Load a template skin
         smpl_trimesh = trimesh.load_mesh(smpl_mesh_path, process=False)
         # Apply the markers on the skin
@@ -86,54 +83,3 @@ class Smpl2osim:
             v = visualize_osim(output_osim_path, self.marker_set_name)
             v.run()
             
-            
-
-def visualize_osim(osim_path, marker_set):
-
-
-    v = Viewer()
-    osim_model_results = OSIMSequence.a_pose(osim_path=osim_path, name='result_osim', color_markers_per_part=True, color_markers_per_index=False, color_skeleton_per_part=True)
-    v.scene.add(osim_model_results)
-
-
-    # 
-    # # import ipdb; ipdb.set_trace()
-    # c = (255/255, 85/255, 255/255, 1)
-    # from aitviewer.utils import vertex_colors_from_weights
-    # # markers_pos_abs = markers_pos_abs[:100,:]
-    # colors = vertex_colors_from_weights(weights=range(len(markers_pos_abs)), scale_to_range_1=True, alpha=1)[np.newaxis, :, :]
-    # markers_abs_pc = PointClouds(markers_pos_abs, colors=colors, position = [0,0,1], name='markers_abs', point_size=15.0)
-    # osim_template = OSIMSequence.a_pose(position = [0,0,1], name='osim_template')
-    
-    # c = (85/255, 85/255, 255/255, 1)
-
-    # colors = vertex_colors_from_weights(weights=range(len(markers_pos_rel)), scale_to_range_1=True, alpha=1)[np.newaxis, :, :]
-    # markers_rel_pc = PointClouds(markers_pos_rel, colors=colors, name='markers_rel')
-
-
-
-    # #rajagopal unposed mesh
-    # rajagopal_trimesh = trimesh.load('/home/kellerm/Data/OpenSim/rajagopal.obj', process=None)
-    # rajagopal_mesh = Meshes(rajagopal_trimesh.vertices, rajagopal_trimesh.faces, name='Rajagopal')
-
-
-
-    # markers_pos_rel, markers_pos_abs = get_markers_location(skel_osim)
-    if marker_set == 'skin_set':
-        # Reconstruct skin mesh form the markers 
-        smpl_mesh = trimesh.load_mesh(cg.sample_smpl_mesh, process=False) # Load a SMPL mesh to get the faces
-        
-        vertices = osim_model_results.marker_trajectory[0]
-        faces = smpl_mesh.faces
-        rajagopal_skin_mesh = Meshes(vertices=vertices, faces=faces, position = [0,0,-1], name='Rajagopal_skin')
-        v.scene.add(rajagopal_skin_mesh)
-
-    # Display in the viewer
-
-    # v.run_animations = True
-    v.scene.camera.position = np.array([5.0, 2.5, 0.0])
-    # v.scene.add(osim_template)
-    # v.scene.add(markers_abs_pc, markers_rel_pc, rajagopal_mesh)
-
-    return v
-

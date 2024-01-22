@@ -1,18 +1,17 @@
-""" Class that, given betas and gender, computes the height and weight of a smpl body."""       
+# Copyright (C) 2024  Max Planck Institute for Intelligent Systems Tuebingen, Marilyn Keller 
 
 from typing import NewType
 import torch
 import trimesh
 import yaml
 import numpy as np
-import os
 import smplx
 import config as cg
 
 Tensor = NewType('Tensor', torch.Tensor)
 
 class BodyMeasurements:
-    ''' Computes the body measurements from the SMPL model '''
+    """ Class that, given betas and gender of the SMPL model, computes the height and weight of a smpl body."""       
     
     DENSITY = 985
     
@@ -48,7 +47,6 @@ class BodyMeasurements:
         mesh = trimesh.load(mesh_path)
         vertices = torch.tensor(mesh.vertices, dtype=torch.float32).unsqueeze(0)
         faces = torch.tensor(mesh.faces, dtype=torch.int64)
-        # import ipdb; ipdb.set_trace()
         triangles = vertices[:, faces]
         return cls(vertices, faces, triangles)
 
@@ -59,7 +57,7 @@ class BodyMeasurements:
 
     def compute_height(self):
         ''' Compute the height using the heel and the top of the head
-        Code adapted from Lea Muller, lea.muller@tuebingen.mpg.de
+        Code adapted from Lea Muller (lea.muller@tuebingen.mpg.de), https://github.com/muelea/shapy/tree/master/measurements, 
         '''
         
         with open(cg.mesh_vertices_path, 'r') as f:
@@ -76,7 +74,6 @@ class BodyMeasurements:
 
         head_top_face_idx = head_top['face_idx']
 
-        # import ipdb; ipdb.set_trace()
         head_top_tri = self.triangles[:, head_top_face_idx]
         head_top = (head_top_tri[:, 0, :] * head_top_bc[0] +
                     head_top_tri[:, 1, :] * head_top_bc[1] +
@@ -94,7 +91,7 @@ class BodyMeasurements:
 
     def compute_mass(self):
         ''' Computes the mass from volume and average body density
-        Code adapted from Lea Muller, lea.muller@tuebingen.mpg.de
+        Code adapted from Lea Muller (lea.muller@tuebingen.mpg.de), https://github.com/muelea/shapy/tree/master/measurements, 
         '''
         x = self.triangles[:, :, :, 0]
         y = self.triangles[:, :, :, 1]

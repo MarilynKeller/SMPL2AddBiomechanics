@@ -1,3 +1,5 @@
+# Copyright (C) 2024  Max Planck Institute for Intelligent Systems Tuebingen, Marilyn Keller 
+
 import argparse
 import os
 import shutil

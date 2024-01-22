@@ -1,6 +1,8 @@
+# Copyright (C) 2024  Max Planck Institute for Intelligent Systems Tuebingen, Marilyn Keller 
+ 
 import numpy as np
-from utils.smpl_utils import smpl_model_fwd
 import nimblephysics as nimble
+from utils.smpl_utils import smpl_model_fwd
 
 class SmplMarker():
     """ Class that, given a SMPL sequence, generates a marker sequence from specific SMPL vertices."""

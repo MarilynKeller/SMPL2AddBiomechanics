@@ -1,9 +1,8 @@
 import argparse
 from typing import Optional
-
 import os
-from aitviewer.renderables.markers import Markers
 
+from aitviewer.renderables.markers import Markers
 from aitviewer.renderables.osim import OSIMSequence
 from aitviewer.utils.vtp_to_ply import convert_meshes
 from aitviewer.viewer import Viewer
