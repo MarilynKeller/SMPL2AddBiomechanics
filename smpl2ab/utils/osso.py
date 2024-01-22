@@ -87,8 +87,3 @@ def get_osso_submesh_util(osso_mesh, osso_rj_seg, bone_name):
         import ipdb; ipdb.set_trace()
 
     return submesh, submesh_global_faces_index
-
-
-
-osso = OssoAug()
-

@@ -1,6 +1,7 @@
 import argparse
 import logging
 import os
+import sys
 import numpy as np
 import trimesh
 import pickle as pkl
@@ -100,9 +101,16 @@ class SSMarkerTransfer():
 
             #self.markers_rigging[m_label] : rajagopal_bone_name
             for bone_name in self.osso_rj_seg.keys():
-
+              
+                # Failed markers 
+                failed_markers = [ml for ml in self.m_label if ml not in self.markers_rigging.keys()]
+                print(f'WARNING: The following markers were not rigged: {failed_markers}, please add those makers manually to the osim model')
+                # sys.exit()
+                
                 # Find indices of the markers attached to the bone
-                markers_mask = [self.m_label.index(ml) for ml in self.m_label if self.markers_rigging[ml] == bone_name]
+                valid_markers = [ml for ml in self.m_label if (ml not in failed_markers)]
+                markers_mask = [self.m_label.index(ml) for ml in valid_markers if (self.markers_rigging[ml] == bone_name)]
+                
                 markers = self.markers_p[markers_mask]
 
                 if len(markers) == 0:
@@ -174,13 +182,21 @@ class SSMarkerTransfer():
         # Load osso segmentation into RJ bones, this segmentation was created with blender
         vertex_rigging_dict =  pkl.load(open(SSMarkerTransfer.osso_rj_segmentation, 'rb'))
         # logging.info([(k, v) for (k,v) in vertex_rigging_dict.items()])
-        # import ipdb; ipdb.set_trace()
+        import ipdb; ipdb.set_trace()
         self.markers_osso_d, self.markers_osso_idx  = trimesh.proximity.ProximityQuery(self.osso_p).vertex(self.markers_p) #vertex index on osso
 
         #For each marker and its corresponding vertex on osso
         self.markers_rigging = {}
         for mi, (m_osso_index, m_label) in enumerate(zip(self.markers_osso_idx, self.m_label)):
-            self.markers_rigging[m_label] = vertex_rigging_dict[m_osso_index]
+            m_osso_part = None
+            for bone_name, bone_vertices in vertex_rigging_dict.items():
+                if m_osso_index in bone_vertices:
+                    m_osso_part = bone_name
+                    break
+            if m_osso_part is None:
+                print(f'WARNING: Could not find the bone corresponding to marker {m_label}')
+            else:
+                self.markers_rigging[m_label] = vertex_rigging_dict[m_osso_part]
         logging.info([(k, v) for (k,v) in self.markers_rigging.items()])
 
 

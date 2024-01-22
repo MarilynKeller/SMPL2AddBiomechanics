@@ -43,7 +43,9 @@ class Smpl2osim:
         # Check that the segmentation is valid
         for k in osso_segmentation.keys():
             if k not in osim_node_names:
-                raise ValueError(f'Segmentation of OSSO contains {k}, which is not a bone in the osim model. Osim bones are: {[bone for bone in osim_node_names]}')                
+                print(f'ERROR: Segmentation of OSSO contains {k}, which is not a bone in the osim model. Osim bones are: {[bone for bone in osim_node_names]}')               
+                continue
+                raise ValueError(f'Segmentation of OSSO contains "{k}", which is not a bone in the osim model. Osim bones are: {[bone for bone in osim_node_names]}')                
                 
         print(f'Marker numbers = {len(self.smpl_marker_dict)}')
         print(f'Osim model bones = {osim_node_names}')
