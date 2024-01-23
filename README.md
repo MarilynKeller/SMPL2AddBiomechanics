@@ -8,6 +8,24 @@ This repository contains Python code for fitting an OpenSim skeleton model to fr
 
 For the SKEL model code, please check the [SKEL repository](https://github.com/MarilynKeller/SKEL).
 
+## Table of Contents 
+
+- [Installation](#installation)
+  - [SMPL](#smpl)
+  - [BSM](#bsm)
+  - [OSSO (Optional)](#osso-optional)
+- [Usage](#usage)
+  - [Quick start](#quick-start)
+  - [Custom markers](#custom-markers)
+  - [Running AddBiomechanics locally](#running-addbiomechanics-locally)
+- [Running the code on your own data](#running-the-code-on-your-own-data)
+  - [SMPL sequences](#smpl-sequences)
+  - [Biomechanical model](#biomechanical-model)
+  - [Markers on SMPL](#markers-on-smpl)
+- [Citation](#citation)
+- [License](#license)
+- [Contact](#contact)
+
 ## Installation
 
 First install the dependancies and the package with the following line:
@@ -38,6 +56,8 @@ To generate a personalized custom markers on the OpenSim model, you will need [O
 
 
 ## Usage
+
+### Quick start
 
 Below is an example that takes the SMPL motion `models/bsm/sample_motion/01_01_poses.npz` and generates measurements and synthetic motion capture data from the sequence.
 
@@ -161,7 +181,7 @@ If you use this software, please cite the following work and software:
 }
 ```
 
-### License
+## License
 
 This code and model are available for non-commercial scientific research purposes as defined in the [LICENSE.txt](LICENSE.txt) file.
 
