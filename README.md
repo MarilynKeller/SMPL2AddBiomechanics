@@ -167,6 +167,9 @@ You can check visually that the SMPL markers defined in the dictionary match the
 python smpl2ab/show_markers.py --osim_path /path/to/your/model.osim --smpl_markers_path /path/to/smpl_markers_dict.yaml
 ```
 
+[<img src="assets/markers_vizu.png" alt="Markers vizu" width="700"/>](assets/markers_vizu.png)
+
+
 ## Citation
 If you use this software, please cite the following work and software:
 

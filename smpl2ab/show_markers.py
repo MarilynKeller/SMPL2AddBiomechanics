@@ -1,11 +1,4 @@
-"""
-Copyright©2023 Max-Planck-Gesellschaft zur Förderung
-der Wissenschaften e.V. (MPG). acting on behalf of its Max Planck Institute
-for Intelligent Systems. All rights reserved.
-
-Author: Marilyn Keller
-See https://skel.is.tue.mpg.de/license.html for licensing and contact information.
-"""
+# Copyright (C) 2024  Max Planck Institute for Intelligent Systems Tuebingen, Marilyn Keller 
 
 import argparse
 import os
@@ -35,13 +28,12 @@ if __name__ == "__main__":
     to_display.append(seq_smpl)
     
     markers_dict = yaml.load(open(args.smpl_markers_path, 'r'), Loader=yaml.FullLoader)
-    import ipdb; ipdb.set_trace()
     synthetic_markers = SmplMarker(seq_smpl.vertices, markers_dict, fps=60, name='SMPL markers')
     markers_seq = Markers(synthetic_markers.marker_trajectory, markers_labels=synthetic_markers.marker_names, name='SMPL markers')
     to_display.append(markers_seq)
     
 
-    osim_seq = OSIMSequence.a_pose(color_skeleton_per_part=True, color_markers_per_part=True, position=[1,-0.5,0])   
+    osim_seq = OSIMSequence.a_pose(osim_path=args.osim_path ,color_skeleton_per_part=True, color_markers_per_part=True, position=[1,-0.5,0])   
     to_display.append(osim_seq)
     
     # Display in the viewer
