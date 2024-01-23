@@ -168,6 +168,6 @@ This code and model are available for non-commercial scientific research purpose
 
 # Contact 
 
-For any question about SKEL loading, please contact skel@tuebingen.mpg.de.
+For any question about BSM and SKEL, please contact skel@tuebingen.mpg.de.
 
 For commercial licensing, please contact ps-licensing@tue.mpg.de
