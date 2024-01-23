@@ -8,13 +8,13 @@ This repository contains Python code for fitting an OpenSim skeleton model to fr
 
 For the SKEL model code, please check the [SKEL repository](https://github.com/MarilynKeller/SKEL).
 
-# Installation
+## Installation
 
 First install the dependancies and the package with the following line:
 ```pip install -e .```
 
 
-## SMPL
+### SMPL
 
 Download the file: SMPL_python_v.1.1.0.zip from the [SMPL download page](https://smpl.is.tue.mpg.de/). And run:
 
@@ -23,7 +23,7 @@ cd ../SMPL2AddBiomechanics
 python scripts/setup_smpl.py /path/to/SMPL_python_v.1.1.0.zip  
 ```
 
-## BSM 
+### BSM 
 
 Download the file: skel_models_v1.x.zip from the [SKEL download page](https://skel.is.tue.mpg.de/). And run:
 
@@ -33,11 +33,11 @@ python scripts/setup_bsm.py /path/to/skel_models_v1.1.zip
 ```
 
 
-## OSSO (Optional)
+### OSSO (Optional)
 To generate a personalized custom markers on the OpenSim model, you will need [OSSO](https://github.com/MarilynKeller/OSSO/). Please check the [OSSO installation instructions](https://github.com/MarilynKeller/OSSO/blob/main/installation.md) to set it up.
 
 
-# Usage
+## Usage
 
 Below is an example that takes the SMPL motion `models/bsm/sample_motion/01_01_poses.npz` and generates measurements and synthetic motion capture data from the sequence.
 
@@ -72,7 +72,7 @@ Below is shown the form filled with the data from the example above:
 Then click on "Process" and wait for the optimization to finish. You will then be able to download the optimized model.
 
 
-## Custom markers
+### Custom markers
 
 The markers location wrt the bones depend on the body shape. While AddBiomechanics does optimize the markers location, we propose a method that leverages OSSO to generate a personalized custom markers set on the OpenSim model. 
 To use this option, add the '--osso' flag to the command line. This will generate a `bsm.osim` file in the output folder that contains a version of the BSM model with personalized markers. 
@@ -85,13 +85,13 @@ Then proceed as above to upload the data to [AddBiomechanics](https://dev-addbio
 
 Note that this option only works with the BSM model. If you want to use your own OpenSim model, you will need to manually add the markers on the model.
 
-## Running AddBiomechanics locally
+### Running AddBiomechanics locally
 
 If you want to run AddBiomechanics locally, you can download and install the source code from the [AddBiomechanics github page](https://github.com/keenon/AddBiomechanics).
 
 The script [AddBiomechanics/blob/main/server/engine/src/engine.py](https://github.com/keenon/AddBiomechanics/blob/main/server/engine/src/engine.py) runs the optimization given a folder of data.
 
-# Running the code on your own data
+## Running the code on your own data
 
 You will need
 - A SMPL motion sequence
@@ -100,7 +100,7 @@ You will need
 
 Below, we detail those items more in depth.
 
-## SMPL sequences
+### SMPL sequences
 You can download SMPL sequences from the [AMASS](https://amass.is.tue.mpg.de/) download page, by clicking the `SMPL+H` button. 
 Here we show an example for the subject `10` of `CMU`. The AMASS data consists in a folder with this structure:
 ```
@@ -118,7 +118,7 @@ Each .npz is a sequence.
 You should pass the path to the subject folder (in this example `/path/to/CMU/10`) to the `smpl2addbio.py` script.
 
 
-## Biomechanical model
+### Biomechanical model
 
 This is an OpenSim model with markers defined on it, in .osim format. By default, the downloaded BSM model will be used.
 You can also use your own OpenSim model:
@@ -129,7 +129,7 @@ python smpl2ab/smpl2addbio.py -i  models/bsm/sample_motion/01 --osim /path/to/yo
 
 Note that in this case, you will need to provide a dictionary giving, for each marker of the .osim model, the corresponding vertex index on SMPL, see the next section for more detail.
 
-## Markers on SMPL
+### Markers on SMPL
 
 In order to fit the OpenSim model to the SMPL sequence, we need to have the same markers defined on both models. So for each marker of the .osim model, you need to provide the corresponding vertex index on SMPL.
 By default, we use the BSM marker set. You can find it as a dictionnary in `SMPL2AddBiomechanics/smpl2ab/data/bsm_markers.yaml`.
@@ -145,7 +145,7 @@ You can check visually that the SMPL markers defined in the dictionary match the
 python smpl2ab/show_markers.py --osim_path /path/to/your/model.osim --smpl_markers_path /path/to/smpl_markers_dict.yaml
 ```
 
-# Citation
+## Citation
 If you use this software, please cite the following work and software:
 
 ```
@@ -161,12 +161,12 @@ If you use this software, please cite the following work and software:
 }
 ```
 
-## License
+### License
 
 This code and model are available for non-commercial scientific research purposes as defined in the [LICENSE.txt](LICENSE.txt) file.
 
 
-# Contact 
+## Contact 
 
 For any question about BSM and SKEL, please contact skel@tuebingen.mpg.de.
 
