@@ -13,4 +13,4 @@ osso_inf_template = os.path.join(package_directory, "data/osso_inference_topo.pl
 smpl_markers_folder = '/tmp/'
 osso_rj_unposed = os.path.join(package_directory, "data/osso_rajagopal_unposed_v2.obj")
 osim_unposed = os.path.join(package_directory, "data/rajagopal_unposed.obj")
-current_model_geometry_folder_cluster = os.path.join(package_directory, 'data/Geometry')
+osim_geometry_folder = os.path.join(package_directory, 'data/Geometry')

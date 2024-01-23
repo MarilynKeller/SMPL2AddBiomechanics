@@ -1,3 +1,5 @@
+# Copyright (C) 2024  Max Planck Institute for Intelligent Systems Tuebingen, Marilyn Keller 
+ 
 import argparse
 import json
 import os
@@ -7,10 +9,9 @@ import yaml
 
 from smpl2ab.markers.smpl2osim import Smpl2osim
 from smpl2ab.markers.smpl_markers import SmplMarker
-import smpl2ab.config as cg
-
 from smpl2ab.measurements.measurements import BodyMeasurements
 from smpl2ab.utils.smpl_utils import SMPL, load_smpl_seq, smpl_model_fwd
+import smpl2ab.config as cg
 
 def create_subj_json_and_mesh(smpl_data):
     

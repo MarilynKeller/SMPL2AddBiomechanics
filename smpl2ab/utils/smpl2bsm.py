@@ -1,0 +1,28 @@
+# Copyright (C) 2024  Max Planck Institute for Intelligent Systems Tuebingen, Marilyn Keller 
+
+smpl2osim_corresp = {
+ 'Pelvis':   ['pelvis'],
+ 'L_Hip':    ['femur_l'],
+ 'R_Hip':    ['femur_r'],
+ 'Spine1':   ['lumbar_body'],
+ 'L_Knee':   ['tibia_l'],
+ 'R_Knee':   ['tibia_r'],
+ 'Spine2':   ['thorax'],
+ 'L_Ankle':  ['talus_l', 'calcn_l'],
+ 'R_Ankle':  ['talus_r', 'calcn_r'],
+ 'Spine3':   ['thorax'],
+ 'L_Foot':   ['toes_l'],
+ 'R_Foot':   ['toes_r'],
+ 'Neck':     ['head'],
+ 'L_Collar': ['scapula_l'],
+ 'R_Collar': ['scapula_r'],
+ 'Head':     ['head'], 
+ 'L_Shoulder':   ['humerus_l'],
+ 'R_Shoulder':   ['humerus_r'],
+ 'L_Elbow':  ['ulna_l', 'radius_l'],
+ 'R_Elbow':  ['ulna_r', 'radius_r'],
+ 'L_Wrist':  ['hand_l'],
+ 'R_Wrist':  ['hand_r'],
+ 'L_Hand':   ['hand_l'],
+ 'R_Hand':   ['hand_r'],
+ }

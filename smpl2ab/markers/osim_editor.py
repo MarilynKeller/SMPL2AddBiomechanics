@@ -56,11 +56,11 @@ class OsimEditor:
         target_geom = '/'.join(output_osim_path.split('/')[:-1]) + '/Geometry'
 
         # Copy the geometry folder to cg.current_model_cluster_folder
-        shutil.copytree(source_geom, cg.current_model_geometry_folder_cluster, dirs_exist_ok=True, symlinks=True) # Copy the whole geometry folder
+        shutil.copytree(source_geom, cg.osim_geometry_folder, dirs_exist_ok=True, symlinks=True) # Copy the whole geometry folder
         
         if os.path.islink(target_geom):
             os.unlink(target_geom)
-        os.symlink(cg.current_model_geometry_folder_cluster, target_geom) # Create a symbolic link of the geometry folder
+        os.symlink(cg.osim_geometry_folder, target_geom) # Create a symbolic link of the geometry folder
         print(f"Geometry copied from {source_geom} to {target_geom}")
         
        

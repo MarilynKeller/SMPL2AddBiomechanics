@@ -1,3 +1,5 @@
+# Copyright (C) 2024  Max Planck Institute for Intelligent Systems Tuebingen, Marilyn Keller 
+ 
 import argparse
 from typing import Optional
 import os
@@ -111,7 +113,6 @@ class KinHelper():
         """Example KinOsim.print_marker_labels('/ps/project/rib_cage_breathing/TML/Data/AddBiomechanics/Models/fused_shoulder_spine/fused_shoulder_spine.osim')"""
         import nimblephysics as nimble
         osim = nimble.biomechanics.OpenSimParser.parseOsim(self.osim_file)
-        import ipdb; ipdb.set_trace()
         markers_labels = [ml for ml in osim.markersMap.keys()]
         markers_labels.sort()
         print(markers_labels)
@@ -122,7 +123,6 @@ class KinHelper():
         osim = nimble.biomechanics.OpenSimParser.parseOsim(self.osim_file)
         markers_labels = [ml for ml in osim.markersMap.keys()]
         marker_parents = []
-        import ipdb; ipdb.set_trace()
         for marker in markers_labels:
             parent = osim.markersMap[marker][0].getName()
             marker_parents.append(parent)

@@ -1,11 +1,13 @@
-
+# Copyright (C) 2024  Max Planck Institute for Intelligent Systems Tuebingen, Marilyn Keller 
+ 
 import os
 import pickle
 import torch
 import trimesh
-from aitviewer.models.smpl import SMPLLayer
 import numpy as np
 import smplx
+
+from aitviewer.models.smpl import SMPLLayer
 import config as cg
 
 NUM_POSE_PARAMS = 72 # only use the first 72 joints (the rest are for the hands)
@@ -29,10 +31,7 @@ class SmplData():
             assert len(set(gender)) == 1, "The data given to SMPL contains different genders, this is not support for now."
             gender = gender[0]
         self.gender = gender
-        
-        # from psbody.mesh import Mesh
-        # Mesh(self.get_vertices().detach().cpu().numpy()[0], self.model.faces).show()
-        
+            
     @property
     def model(self):
         if self._model is None:
@@ -55,9 +54,7 @@ class SmplData():
             print(f"loading {amass_file}")
         
         if amass_file.endswith('.pkl'):
-            # import ipdb; ipdb.set_trace()
             smpl_data = pickle.load(open(amass_file, 'rb'))
-            # import ipdb; ipdb.set_trace()
             if 'YOGI' in amass_file:
                 gender = 'female'
             else:
@@ -66,7 +63,7 @@ class SmplData():
             poses = np.zeros((smpl_data['transl'].shape[0], 72))
             poses[:,:3] = smpl_data['global_orient']
             poses[:,3:72] = smpl_data['body_pose']
-            betas = np.mean(smpl_data['betas'],axis=0)#[:num_betas]
+            betas = np.mean(smpl_data['betas'],axis=0)
 
         elif amass_file.endswith('.npz'):
             smpl_data = np.load(amass_file)
@@ -90,7 +87,6 @@ class SmplData():
             mocap_framerate = smpl_data['mocap_framerate']
         else:
             print(f'No mocap info in {amass_file}')
-            # import ipdb; ipdb.set_trace()
             mocap_framerate = 60 # default mocap_framerate
             
         if isinstance(mocap_framerate, np.ndarray):
@@ -116,7 +112,6 @@ class SmplData():
         global_orient = torch.FloatTensor(self.poses[:, 0:3])
         transl = torch.FloatTensor(self.trans)
         
-        # import ipdb; ipdb.set_trace()
         smpl_output = smpl_model(betas=torch_betas, body_pose=body_pose, transl=transl, global_orient=global_orient)
         vertices = smpl_output.vertices
          
@@ -143,7 +138,6 @@ def amass2params(amass_file):
     smpl_poses = smpl_data['poses'][:, :NUM_POSE_PARAMS] 
     smpl_trans = smpl_data['trans']
     smpl_poses = np.hstack([smpl_trans, smpl_poses])
-    gender = ge
     smpl_beta = smpl_data['betas']
     
     if isinstance(gender, np.ndarray):

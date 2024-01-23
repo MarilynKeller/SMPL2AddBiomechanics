@@ -1,10 +1,13 @@
+# Copyright (C) 2024  Max Planck Institute for Intelligent Systems Tuebingen, Marilyn Keller 
 
 import os
 import trimesh
 import nimblephysics as nimble
 import numpy as np
+
 from aitviewer.renderables.osim import OSIMSequence
 from aitviewer.viewer import Viewer
+
 import config as cg
 
 
@@ -15,9 +18,6 @@ class OsimAug():
         assert os.path.exists(osim_path), f'{osim_path} does not exist'
         self.osim_path = osim_path
         self.osim = nimble.biomechanics.OpenSimParser.parseOsim(osim_path)
-        # import ipdb; ipdb.set_trace()
-        # for attr in ['anatomicalMarkers', 'markersMap', 'skeleton', 'trackingMarkers']:
-        #     setattr(self, attr, getattr(osim, attr))
         self.skeleton = self.osim.skeleton
         
         self.node_names = [n.getName() for n in self.osim.skeleton.getBodyNodes()]
@@ -37,8 +37,6 @@ class OsimAug():
  
  
     def create_template(self):
-
-        # import ipdb; ipdb.set_trace()
         part_meshes = []
         for node_name in self.node_names:
             mesh = self.meshes_dict[node_name]
@@ -47,7 +45,6 @@ class OsimAug():
                 print( "WARNING: No mesh for node: {}".format(node_name))
             if mesh:
                 part_meshes.append(mesh)
-        # part_meshes = [m for m in part_meshes if m]
         self.template = trimesh.util.concatenate(part_meshes)
         
     
@@ -66,7 +63,6 @@ class OsimAug():
         markers_pos_abs = np.vstack(markers_abs.values())
 
         ################# Get markers bone attachments
-        # import ipdb; ipdb.set_trace()
         # body_nodes = [m[0] for m in osim.markersMap.values()]
         # for bn in body_nodes:
         #     print(bn.getName())
@@ -77,7 +73,6 @@ class OsimAug():
     
     def list_bone_infos(self):
         """ List the bones and the corresponding meshes"""
-        # import ipdb; ipdb.set_trace()
         node_names = [n.getName() for n in self.osim.skeleton.getBodyNodes()]
         print('Number of nodes:', len(node_names))
         print(node_names)
@@ -168,8 +163,6 @@ class OsimAug():
         node_names = self.node_names
         scales = np.zeros((len(node_names), 3))
         for ni, node_name in enumerate(node_names):
-            mesh_list = []
-            # import ipdb; ipdb.set_trace()
             body_node = self.osim.skeleton.getBodyNode(node_name)
             for shape_node in body_node.getShapeNodes():
                 scales[ni] = shape_node.getShape().getScale()
@@ -181,17 +174,14 @@ class OsimAug():
     
         v = Viewer()
 
-        # import ipdb; ipdb.set_trace()
         osim_model_results = OSIMSequence.a_pose(osim_path=self.osim_path, name='result_osim', color_markers_per_part=True, color_skeleton_per_part=True)
         v.scene.add(osim_model_results)
         
         v.run()
-        
-        
+              
     def get_joints(self):
         node_names = self.node_names
         joints_loc = np.zeros((len(node_names), 3))
-        import ipdb; ipdb.set_trace()
         for ni, node_name in enumerate(node_names):
             transfo = self.osim.skeleton.getBodyNode(node_name).getTransform()
             joints_loc[ni] = transfo.translation()
@@ -200,7 +190,6 @@ class OsimAug():
     def find_rot_axis(self):
         node_names = self.node_names
         joints_loc = np.zeros((len(node_names), 3))
-        import ipdb; ipdb.set_trace()
         for ni, node_name in enumerate(node_names):
             transfo = self.osim.skeleton.getBodyNode(node_name).getTransform()
             joints_loc[ni] = transfo.translation()
@@ -213,8 +202,9 @@ class OsimAug():
                 print(j.getFlipAxisMap())
             except:
                 print('No coordinate')
+   
         
 if __name__ == '__main__':
-    oa = OsimAug()
     
+    oa = OsimAug()  
     oa.get_joints_flip_axis_map()

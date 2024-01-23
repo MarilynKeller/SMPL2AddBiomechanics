@@ -1,12 +1,13 @@
+# Copyright (C) 2024  Max Planck Institute for Intelligent Systems Tuebingen, Marilyn Keller 
+
 import os
 import pickle
-
 import numpy as np
 import torch
 import smplx
 import config as cg
 
-def load_smpl_seq(smpl_seq_path, include_verts=False):
+def load_smpl_seq(smpl_seq_path):
 
     if not os.path.exists(smpl_seq_path):
         raise Exception('Path does not exist: {}'.format(smpl_seq_path))

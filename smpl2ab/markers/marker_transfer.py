@@ -17,7 +17,7 @@ from smpl2ab.markers.mapping import apply_mapping, apply_mapping_barycentric, co
 from smpl2ab.utils.osso import get_osso_submesh_util 
 from smpl2ab.utils.smpl import load_mean_smpl
 from smpl2ab.utils.osim_aug import OsimAug
-from smpl2ab.utils.kinosim_fused import smpl2osim_corresp
+from smpl2ab.utils.smpl2bsm import smpl2osim_corresp
 
 import config as cg
 

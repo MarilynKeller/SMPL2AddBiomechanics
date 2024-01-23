@@ -1,6 +1,12 @@
 # SMPL to AddBiomechanics
 
-This repository contains Python code for generating input data for [AddBiomechanics](https://addbiomechanics.org/) from SMPL sequences. [AddBiomechanics](https://addbiomechanics.org/) is a free online tool designed to align an OpenSim Skeleton model to motion capture data.
+This repository is part of the code release for the Siggraph Asia 2023 paper "From Skin to Skeleton: Towards Biomechanically Accurate 3D Digital Humans". 
+
+[[paper](https://download.is.tue.mpg.de/skel/main_paper.pdf)] [[project page](https://skel.is.tue.mpg.de/)]
+
+This repository contains Python code for fitting an OpenSim skeleton model to from SMPL sequences using AddBiomechanics. [AddBiomechanics](https://addbiomechanics.org/) is a free online tool designed to align an OpenSim skeleton model to motion capture data.
+
+For the SKEL model code, please check the [SKEL repository](https://github.com/MarilynKeller/SKEL).
 
 # Installation
 
@@ -59,6 +65,12 @@ In the 'Upload Custom OpenSim Model' section, upload the BSM model `models/bsm/b
 
 In "Motion Capture Files" section, upload the `trc` file from `output/01/trials/01_01_poses.trc`.
 
+Below is shown the form filled with the data from the example above:
+
+[<img src="assets/add_bio_form.png" alt="drawing" width="200"/>](assets/add_bio_form.png)
+
+Then click on "Process" and wait for the optimization to finish. You will then be able to download the optimized model.
+
 
 ## Custom markers
 
@@ -70,6 +82,8 @@ python smpl2ab/smpl2addbio.py -i  models/bsm/sample_motion/01 --osso --display
 ```
 
 Then proceed as above to upload the data to [AddBiomechanics](https://dev-addbiomechanics.org/). But this time, upload the `bsm.osim` file from `output/01/bsm.osim` in the "Upload Custom OpenSim Model" section.
+
+Note that this option only works with the BSM model. If you want to use your own OpenSim model, you will need to manually add the markers on the model.
 
 ## Running AddBiomechanics locally
 
@@ -83,6 +97,8 @@ You will need
 - A SMPL motion sequence
 - A biomechanical skeleton model .osim with markers defined on it (BSM will be used by defaut)
 - A dictionary giving, for each marker of the .osim, the corresponding vertex index on SMPL (The BSM correspondance will be used by default)
+
+Below, we detail those items more in depth.
 
 ## SMPL sequences
 You can download SMPL sequences from the [AMASS](https://amass.is.tue.mpg.de/) download page, by clicking the `SMPL+H` button. 
@@ -99,31 +115,35 @@ CMU
 
 Each .npz is a sequence.
 
-You should pass the path to the subject folder to the `smpl2addbio.py` script.
+You should pass the path to the subject folder (in this example `/path/to/CMU/10`) to the `smpl2addbio.py` script.
 
 
 ## Biomechanical model
 
-By default, you can use our BSM model:
-Download bsm.osim and the Geometry folder from the [SKEL project page](https://skel.is.tue.mpg.de/) `download page - > "Download Models" button`, and place it in the 'models' folder.
-
+This is an OpenSim model with markers defined on it, in .osim format. By default, the downloaded BSM model will be used.
 You can also use your own OpenSim model:
+  
+  ```bash
+python smpl2ab/smpl2addbio.py -i  models/bsm/sample_motion/01 --osim /path/to/your_model.osim --marker_dict /path/to/smpl_markers_dict.yaml
+```
 
-python smpl2ab/smpl2addbio.py -i  models/bsm/sample_motion/01 --osso --display
+Note that in this case, you will need to provide a dictionary giving, for each marker of the .osim model, the corresponding vertex index on SMPL, see the next section for more detail.
 
 ## Markers on SMPL
 
-For each marker of the .osim model, you need to provide the corresponding vertex index on SMPL.
+In order to fit the OpenSim model to the SMPL sequence, we need to have the same markers defined on both models. So for each marker of the .osim model, you need to provide the corresponding vertex index on SMPL.
 By default, we use the BSM marker set. You can find it as a dictionnary in `SMPL2AddBiomechanics/smpl2ab/data/bsm_markers.yaml`.
 
 If your model has a different marker set, you can create your own dictionnary similar `SMPL2AddBiomechanics/smpl2ab/data/bsm_markers.yaml`.
 This dictionnary must contain the same markers as your .osim model. To help you to create this dictionnary, you can run the following script:
-```
-python smpl2ab/utils/kin_helpers.py -o  /path/to/your/model.osim  -m -mr -D
+```bash
+python smpl2ab/utils/kin_helpers.py -o  /path/to/your/model.osim  -m -mr
 ```
 
-This will print all the markers of your OpenSim model,the bone they are rigged to and display each markers on the skeleton mesh with their label. Note that to display the model, you will need to install [aitviewer-skel](https://github.com/MarilynKeller/aitviewer-skel).
-
+You can check visually that the SMPL markers defined in the dictionary match the OpenSim model markers by running:
+```bash
+python smpl2ab/show_markers.py --osim_path /path/to/your/model.osim --smpl_markers_path /path/to/smpl_markers_dict.yaml
+```
 
 # Citation
 If you use this software, please cite the following work and software:
