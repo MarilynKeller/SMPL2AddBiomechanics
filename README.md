@@ -4,9 +4,19 @@ This repository is part of the code release for the Siggraph Asia 2023 paper "Fr
 
 [[paper](https://download.is.tue.mpg.de/skel/main_paper.pdf)] [[project page](https://skel.is.tue.mpg.de/)]
 
-This repository contains Python code for fitting an OpenSim skeleton model from SMPL sequences using AddBiomechanics. [AddBiomechanics](https://addbiomechanics.org/) is a free online tool designed to align an OpenSim skeleton model to motion capture data.
 
-For the SKEL model code, please check the [SKEL repository](https://github.com/MarilynKeller/SKEL).
+Given a [SMPL](https://smpl.is.tue.mpg.de/) body motion sequence as .npz or .pkl we enable getting  a scaled [OpenSim](https://simtk.org/projects/opensim) skeleton model (.osim) and the corresponding skeleton motion (.mot).
+
+
+<video src="assets/input_output.mp4" controls title="Input output illustration"></video>
+*Left: Input SMPL sequence   Right: Output OpenSim sequence*
+
+-----------
+
+
+We provide here code for fitting an OpenSim skeleton model from SMPL sequences using AddBiomechanics. [AddBiomechanics](https://addbiomechanics.org/) is a free online tool designed to align an OpenSim skeleton model to motion capture data.
+
+If you are loooking for the SKEL model code, please check the [SKEL repository](https://github.com/MarilynKeller/SKEL).
 
 ## Table of Contents 
 
@@ -93,6 +103,15 @@ Below is shown the form filled with the data from the example above:
 
 Then click on "Process" and wait for the optimization to finish. You will then be able to download the optimized model.
 
+Once the process done, you can download the results (in this case 01.zip), extract the zip file and run the following command to visualize the results:
+
+```bash
+ python smpl2ab/show_ab_results.py --osim_path=addbio_res_folder/01/Models/match_markers_but_ignore_physics.osim --mot_path=addbio_res_folder/01/IK/01_01_poses_segment_0_ik.mot --smpl_motion_path=models/bsm/sample_motion/01/01_01_poses.npz
+```
+
+This script shows the superimposition of the input SMPL sequences, the markers that were created in green, and the OpenSim skeleton aligned by AddBiomechanics.
+
+<video src="assets/superimp_res.mp4" controls title="Title"></video>
 
 ### Custom markers
 

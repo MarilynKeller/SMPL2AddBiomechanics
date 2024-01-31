@@ -120,7 +120,6 @@ def create_data_folder(subject_name, subject_trials, output_folder, osim_model_p
             
             synthetic_markers = SmplMarker.from_smpl_data(smpl_data=seq_data, marker_set_name=marker_set_name, markers_dict=markers_dict, smpl_model=smpl_model)
             synthetic_markers.save_trc(synth_mocap_file)
-            pickle.dump(synthetic_markers, open(synth_mocap_file, 'wb'))
             del synthetic_markers
 
             print(f'Generated synthetic markers as {synth_mocap_file}.')
