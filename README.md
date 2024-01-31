@@ -8,7 +8,8 @@ This repository is part of the code release for the Siggraph Asia 2023 paper "Fr
 Given a [SMPL](https://smpl.is.tue.mpg.de/) body motion sequence as .npz or .pkl we enable getting  a scaled [OpenSim](https://simtk.org/projects/opensim) skeleton model (.osim) and the corresponding skeleton motion (.mot).
 
 
-<video src="assets/input_output.mp4" controls title="Input output illustration"></video>
+
+https://github.com/MarilynKeller/SMPL2AddBiomechanics/assets/102662583/95130620-4f62-4c41-a79a-dae3228d6951
 *Left: Input SMPL sequence   Right: Output OpenSim sequence*
 
 -----------
@@ -111,7 +112,8 @@ Once the process done, you can download the results (in this case 01.zip), extra
 
 This script shows the superimposition of the input SMPL sequences, the markers that were created in green, and the OpenSim skeleton aligned by AddBiomechanics.
 
-<video src="assets/superimp_res.mp4" controls title="Title"></video>
+https://github.com/MarilynKeller/SMPL2AddBiomechanics/assets/102662583/0995bd48-8ef7-4ed8-aaad-b92199f6ae3e
+
 
 ### Custom markers
 
