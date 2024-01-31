@@ -10,6 +10,7 @@ Given a [SMPL](https://smpl.is.tue.mpg.de/) body motion sequence as .npz or .pkl
 
 
 https://github.com/MarilynKeller/SMPL2AddBiomechanics/assets/102662583/95130620-4f62-4c41-a79a-dae3228d6951
+
 *Left: Input SMPL sequence   Right: Output OpenSim sequence*
 
 -----------
