@@ -1,4 +1,4 @@
-# A dictionary of marker name and the corresponding smpl vertex id 
+# A dictionary of marker name and the corresponding smpl+H vertex id 
 BLTI: 1131
 BRTI: 4615
 C7: 1306  #spine
