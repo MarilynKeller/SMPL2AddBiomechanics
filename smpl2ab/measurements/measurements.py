@@ -44,7 +44,7 @@ class BodyMeasurements:
     
     @classmethod
     def from_mesh_file(cls, mesh_path):
-        mesh = trimesh.load(mesh_path)
+        mesh = trimesh.load(mesh_path, process=False)
         vertices = torch.tensor(mesh.vertices, dtype=torch.float32).unsqueeze(0)
         faces = torch.tensor(mesh.faces, dtype=torch.int64)
         triangles = vertices[:, faces]
