@@ -15,7 +15,7 @@ class SmplMarker():
 
         markers_smpl_indices = list(markers_dict.values())
 
-        self.marker_trajectory = np.array(verts[:, markers_smpl_indices])
+        self.marker_trajectory = verts[:, markers_smpl_indices].detach().numpy()
         self.marker_names = list(markers_dict.keys())
 
 

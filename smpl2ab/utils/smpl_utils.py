@@ -38,8 +38,8 @@ def load_smpl_seq(smpl_seq_path):
     out_dict['betas'] = data_dict['betas']
     out_dict['gender'] = data_dict['gender']
     
-    if "mocap_framerate" in data_dict.keys():
-        out_dict['fps'] = data_dict['mocap_framerate']
+    fps_key = [k for k in data_dict.keys() if k.endswith('rate')][0] # works if the key is 'mocap_rate' or 'mocap_framerate'
+    out_dict.update({'fps':data_dict.get(fps_key)})
         
     return out_dict
 
@@ -53,16 +53,19 @@ def smpl_model_fwd(smpl_model, smpl_data, device='cpu'):
     betas_smpl = to_torch(smpl_data['betas'][:smpl_model.num_betas]).expand(trans_smpl.shape[0], -1)
     
     # Run a SMPL forward pass to get the SMPL body vertices
-    smpl_output = smpl_model(betas=betas_smpl, body_pose=poses_smpl[:,3:], transl=trans_smpl, global_orient=poses_smpl[:,:3])
+    body_pose = poses_smpl[:,3:66] if 'X' in smpl_model.name() else poses_smpl[:,3:]
+    batch_size=len(poses_smpl)
+    smpl_output = smpl_model(betas=betas_smpl, body_pose=body_pose, transl=trans_smpl, global_orient=poses_smpl[:,:3], \
+                            jaw_pose=torch.zeros([batch_size, 3]), leye_pose=torch.zeros([batch_size, 3]), reye_pose=torch.zeros([batch_size, 3]), left_hand_pose=torch.zeros([batch_size, 6]), right_hand_pose=torch.zeros([batch_size, 6]), expression=torch.zeros([batch_size, 10]))
     verts = smpl_output.vertices
     return verts
    
     
-def SMPL(gender, num_betas=10): 
+def SMPL(gender, num_betas=10, model_type='smpl'): 
     smpl= smplx.create(
             model_path=cg.smpl_folder,
             gender=gender,
             num_betas=num_betas,
-            model_type='smpl')
+            model_type=model_type)
     return smpl
     

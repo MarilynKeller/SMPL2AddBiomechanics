@@ -31,7 +31,7 @@ def create_subj_json_and_mesh(smpl_data):
     return subject_json
 
 
-def create_data_folder(subject_name, subject_trials, output_folder, osim_model_path=None, marker_dict_path=None, use_osso=False, force_recompute=False, display=True):
+def create_data_folder(subject_name, subject_trials, output_folder, osim_model_path=None, marker_dict_path=None, use_smplx=False, use_osso=False, force_recompute=False, display=True, no_confirm=False):
     """ Create the AdBiomechanics input data folder for a SMPL subject.
     Those data can be feed into AddBiomechanics to align an OpenSim Skeleton model to it.
     @param subject_name: name of the subject
@@ -56,14 +56,15 @@ def create_data_folder(subject_name, subject_trials, output_folder, osim_model_p
     json.dump(subject_json, open(subject_json_file, 'w'))
     print('Subject measurements saved as {}'.format(subject_json_file))
     
-    smpl_model = SMPL(gender = seq_data['gender'])
+    model_type = 'smplx' if use_smplx else 'smpl'
+    smpl_model = SMPL(gender = seq_data['gender'], model_type=model_type)
     
     # Select the marker set to use
-    if osim_model_path == cg.osim_model_path and marker_dict_path == cg.bsm_markers_on_smpl_path:
+    if osim_model_path == cg.osim_model_path and (marker_dict_path == cg.bsm_markers_on_smpl_path or marker_dict_path == cg.bsm_markers_on_smplx_path):
         # Use the default BSM model and marker set
         # from markers.marker_sets import bsm_marker_set
-        marker_set_name='bsm'
-        with open(cg.bsm_markers_on_smpl_path, 'r') as yaml_file:
+        marker_set_name='bsm_smpl' if not use_smplx else 'bsm_smplx'
+        with open(marker_dict_path, 'r') as yaml_file:
             markers_dict = yaml.safe_load(yaml_file)
         osso_segmentation = pickle.load(open(cg.bsm_osso_segmentation, 'rb'))
         rigging_method = 'gt'
@@ -73,7 +74,8 @@ def create_data_folder(subject_name, subject_trials, output_folder, osim_model_p
         with open(marker_dict_path, 'r') as yaml_file:
             markers_dict = yaml.safe_load(yaml_file)
         print(f"WARNING: You are using a custom OpenSim model. If your model has different bone meshes than BSM, the marker transfer will fail. We advice to not use the --osso option in this case.")
-        input('Press Ctrl+C to abort. If you wish to proceed anyway, press any other key ...')
+        if not no_confirm:
+            input('Press Ctrl+C to abort. If you wish to proceed anyway, press any other key ...')
         osso_segmentation = pickle.load(open(cg.bsm_osso_segmentation, 'rb'))
         marker_set_name = 'custom'
         rigging_method = 'closest_rj_bone'
@@ -144,11 +146,13 @@ if __name__ == '__main__':
     parser.add_argument('-i', '--smpl_seq_folder', type=str, help='Path to the SMPL sequences folder', 
                         default='/is/cluster/work/mkeller2/Data/TML/AMASS/CMU/11')
     parser.add_argument('--osim', type=str, help='Path to a OpenSim model (.osim file)', default=cg.osim_model_path)
-    parser.add_argument('--marker_dict', type=str, help='Path to a marker dictionary (.yaml file)', default=cg.bsm_markers_on_smpl_path)
+    parser.add_argument('--marker_dict', type=str, help='Path to a marker dictionary (.yaml file)')
     parser.add_argument('-o','--output_folder', type=str,help='Path to the output folder', default='./output')
+    parser.add_argument('--smplx', action='store_true', help='Run on SMPL-X instead of SMPL+H files')
     parser.add_argument('-f','--force_recompute', action='store_true', help='Force recomputing the synthetic markers')
     parser.add_argument('--osso', action='store_true', help='Gerenate personalized markers on the BSM template with the proper offsets to the bones, using OSSO.')
     parser.add_argument('-D','--display', action='store_true', help='If OSSO is used, display the result of the marker transfer.')
+    parser.add_argument('--no_confirm', action='store_true', help="Do not ask for confirmation after warning.")
     
     args = parser.parse_args()
     
@@ -159,11 +163,16 @@ if __name__ == '__main__':
         raise ValueError(f"No SMPL sequences found at {args.smpl_seq_folder}")
     print(f"Found {len(subject_trials)} trials for subject {subject_name}")
 
+    marker_dict_path = args.marker_dict
+    marker_dict_path = [marker_dict_path if marker_dict_path else [cg.bsm_markers_on_smplx_path if args.smplx else cg.bsm_markers_on_smpl_path][0]][0]
+
     create_data_folder(subject_name=subject_name, 
                        subject_trials=subject_trials, 
                        output_folder=args.output_folder, 
                        osim_model_path=args.osim, 
-                       marker_dict_path=args.marker_dict, 
+                       marker_dict_path=marker_dict_path, 
+                       use_smplx=args.smplx, 
                        use_osso=args.osso, 
                        force_recompute=args.force_recompute, 
-                       display=args.display)
+                       display=args.display,
+                       no_confirm=args.no_confirm)
