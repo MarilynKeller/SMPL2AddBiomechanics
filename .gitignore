@@ -3,3 +3,6 @@ models/
 *__pycache__/
 imgui.ini
 *.egg-info/
+*.zip
+*.json
+*.trc

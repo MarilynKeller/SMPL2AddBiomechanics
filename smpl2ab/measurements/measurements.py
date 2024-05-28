@@ -15,22 +15,23 @@ class BodyMeasurements:
     
     DENSITY = 985
     
-    def __init__(self, verts, faces, triangles):
+    def __init__(self, verts, faces, triangles, model_type='smpl'):
 
         self.verts =  verts
         self.faces = faces
         self.triangles = triangles
+        self.model_type = model_type
         
         self.print_measurements()
 
 
     @classmethod
-    def from_smpl_params(cls, gender, betas, device='cpu'):
+    def from_smpl_params(cls, gender, betas, model_type='smpl', device='cpu'):
         smpl= smplx.create(
             model_path=cg.smpl_folder,
             gender=gender,
             num_betas=betas.shape[0],
-            model_type='smpl'
+            model_type=model_type
         ).to(device)
 
         # T pose
@@ -40,7 +41,7 @@ class BodyMeasurements:
         # Apply T pose and betas
         body = smpl(poses_body = pose, betas = betas[:])
         triangles = body.vertices[:, smpl.faces_tensor]
-        return cls(body.vertices, smpl.faces_tensor, triangles) 
+        return cls(body.vertices, smpl.faces_tensor, triangles, model_type) 
     
     @classmethod
     def from_mesh_file(cls, mesh_path):
@@ -60,7 +61,8 @@ class BodyMeasurements:
         Code adapted from Lea Muller (lea.muller@tuebingen.mpg.de), https://github.com/muelea/shapy/tree/master/measurements, 
         '''
         
-        with open(cg.mesh_vertices_path, 'r') as f:
+        mesh_vertices_path = cg.mesh_vertices_smplx_path if self.model_type=='smplx' else cg.mesh_vertices_path
+        with open(mesh_vertices_path, 'r') as f:
             meas_vertices = yaml.safe_load(f)
 
         head_top = meas_vertices['HeadTop']

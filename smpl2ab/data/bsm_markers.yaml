@@ -1,4 +1,4 @@
-# A dictionary of marker name and the corresponding smpl vertex id 
+# A dictionary of marker name and the corresponding smpl+H vertex id 
 BLTI: 1131
 BRTI: 4615
 C7: 1306  #spine
@@ -60,7 +60,6 @@ RANK: 6727
 RBAC: 5295
 RBHD: 3897
 RBWT: 6522
-RBWT: 6523
 RELB: 5112 
 RELS: 6471
 RELSO: 5090

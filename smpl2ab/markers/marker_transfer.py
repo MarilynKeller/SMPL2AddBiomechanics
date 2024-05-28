@@ -201,7 +201,7 @@ class SSMarkerTransfer():
         # Load dict mapping smpl bone index to rajagopal bone name
         from auto_markers.rajagopal_smpl_rigging import smpl_to_raj_dict 
         
-        smpl_layer = SMPLLayer(model_type='smpl', gender='neutral',  device='cpu')
+        smpl_layer = SMPLLayer(model_type='smpl', gender='neutral', device='cpu')
         skining_weights = smpl_layer.bm.lbs_weights.numpy()
     
         #For each marker 

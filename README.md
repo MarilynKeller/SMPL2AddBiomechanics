@@ -55,6 +55,14 @@ cd ../SMPL2AddBiomechanics
 python scripts/setup_smpl.py /path/to/SMPL_python_v.1.1.0.zip  
 ```
 
+If you plan to use SMPL-X files rather than SMPL+H ones, also download the file: smplx_lockedhead_20230207.zip from the [SMPL-X download page](https://smpl-x.is.tue.mpg.de/). And run:
+
+```
+cd ../SMPL2AddBiomechanics
+python scripts/setup_smplx.py /path/to/smplx_lockedhead_20230207.zip  
+```
+
+
 ### BSM 
 
 Download the file: skel_models_v1.x.zip from the [SKEL download page](https://skel.is.tue.mpg.de/). And run:
