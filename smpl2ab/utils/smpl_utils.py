@@ -24,7 +24,7 @@ def load_smpl_seq(smpl_seq_path):
             data_dict['gender'] = str(data_dict['gender'])
             
         if data_dict['poses'].shape[1] == 156:
-            # Those are SMPL+H poses, we remove the hand poses to keep only the body poses
+            # We remove the hand and face poses to keep only the body poses
             poses = np.zeros((data_dict['poses'].shape[0], 72))
             poses[:, :72-2*3] = data_dict['poses'][:, :72-2*3] # We leave params for SMPL joints 22 and 23 to zero 
             data_dict['poses'] = poses

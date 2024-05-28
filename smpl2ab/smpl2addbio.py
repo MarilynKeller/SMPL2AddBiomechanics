@@ -13,12 +13,12 @@ from smpl2ab.measurements.measurements import BodyMeasurements
 from smpl2ab.utils.smpl_utils import SMPL, load_smpl_seq, smpl_model_fwd
 import smpl2ab.config as cg
 
-def create_subj_json_and_mesh(smpl_data):
+def create_subj_json_and_mesh(smpl_data, model_type='smpl'):
     
     gender = smpl_data['gender']
     betas = smpl_data['betas']
 
-    body_measurements = BodyMeasurements.from_smpl_params(gender, betas[:10])
+    body_measurements = BodyMeasurements.from_smpl_params(gender, betas[:10], model_type=model_type)
 
     subject_json = {
         "subjectTags": ["healthy"], 
@@ -50,13 +50,13 @@ def create_data_folder(subject_name, subject_trials, output_folder, osim_model_p
 
     # Generate subject_json with body measurements
     subject_json_file = os.path.join(subject_folder, '_subject.json')
+    model_type = 'smplx' if use_smplx else 'smpl'
     seq_data = load_smpl_seq(subject_trials[0]) # Load the first sequence
-    subject_json = create_subj_json_and_mesh(seq_data)
+    subject_json = create_subj_json_and_mesh(seq_data, model_type=model_type)
     print('Subject json: ', subject_json)
     json.dump(subject_json, open(subject_json_file, 'w'))
     print('Subject measurements saved as {}'.format(subject_json_file))
     
-    model_type = 'smplx' if use_smplx else 'smpl'
     smpl_model = SMPL(gender = seq_data['gender'], model_type=model_type)
     
     # Select the marker set to use
