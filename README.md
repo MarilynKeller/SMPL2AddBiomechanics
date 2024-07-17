@@ -90,8 +90,7 @@ The `_subject.json` file contains the estimated subject measurements :
 `{"sex": "male", "massKg": "68.94", "heightM": "1.80"}`
 , and the `trc` file contains the synthetic motion capture data for the input sequences.
 
-This information can be used as input for [AddBiomechanics](https://dev-addbiomechanics.org/) to align the OpenSim model to the motion capture data.
-Note that you will need to use the developer version of https://dev-addbiomechanics.org/ that support the BSM model.
+This information can be used as input for [AddBiomechanics](https://addbiomechanics.org/) to align the OpenSim model to the motion capture data.
 
 In the 'Upload Custom OpenSim Model' section, upload the BSM model `models/bsm/bsm.osim`.
 
