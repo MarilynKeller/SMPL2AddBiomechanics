@@ -53,7 +53,7 @@ if __name__ == "__main__":
         smpl_layer = smpl_layer,
         npz_data_path=os.path.join(args.smpl_motion_path), # AMASS/CMU/01/01_01_poses.npz
         fps_out=fps,
-        name=f"SMPL motion",
+        name=f"{args.body_model.upper()} motion",
         show_joint_angles=False,
         z_up=False
     )
@@ -74,7 +74,7 @@ if __name__ == "__main__":
 
     # Load SMPL markers
     markers_dict = yaml.load(open(args.smpl_markers_path, 'r'), Loader=yaml.FullLoader)
-    synthetic_markers = SmplMarker(seq_smpl.vertices, markers_dict, fps=fps, name='SMPL markers')
+    synthetic_markers = SmplMarker(seq_smpl.vertices, markers_dict, fps=fps, name='Markers')
     markers_seq = Markers(synthetic_markers.marker_trajectory, markers_labels=synthetic_markers.marker_names, 
                           name='SMPL markers',
                           color=(0, 1, 0, 1))
