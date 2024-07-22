@@ -155,7 +155,7 @@ if __name__ == '__main__':
     parser.add_argument('--marker_dict', type=str, help='Path to a marker dictionary (.yaml file)', default=None)
     parser.add_argument('-o','--output_folder', type=str,help='Path to the output folder', default='./output')
     parser.add_argument('-F','--force_recompute', action='store_true', help='Force recomputing the synthetic markers')
-    parser.add_argument('--body_model', help='Body model to use (smpl or smplx)', default='smpl', choices=['smpl', 'smplx'])
+    parser.add_argument('--body_model', help='Body model to use (smpl or smplx). If the sequences you use are SMPLH, use SMPL. If they are SMPLX, use SMPLX', default='smpl', choices=['smpl', 'smplx'])
     parser.add_argument('--osso', action='store_true', help='Gerenate personalized markers on the BSM template with the proper offsets to the bones, using OSSO.')
     parser.add_argument('-D','--display', action='store_true', help='If OSSO is used, display the result of the marker transfer.')
     parser.add_argument('--no_confirm', action='store_true', help="Do not ask for confirmation after warning.")
