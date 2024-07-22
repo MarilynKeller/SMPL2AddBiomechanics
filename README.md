@@ -34,6 +34,7 @@ If you are loooking for the SKEL model code, please check the [SKEL repository](
   - [SMPL sequences](#smpl-sequences)
   - [Biomechanical model](#biomechanical-model)
   - [Markers on SMPL](#markers-on-smpl)
+  - [Using SMPL X](#using-smpl-x)
 - [Citation](#citation)
 - [License](#license)
 - [Contact](#contact)
@@ -198,6 +199,10 @@ python smpl2ab/show_markers.py --osim_path /path/to/your/model.osim --smpl_marke
 
 [<img src="assets/markers_vizu.png" alt="Markers vizu" width="700"/>](assets/markers_vizu.png)
 
+### Using SMPL X
+
+All the demo script can be run on SMPLX sequences by adding the argument `--body_model=smplx`. In this case you will need to specify a SMPLX specific marker set  `--marker_set_path smpl2ab/data/bsm_markers_smplx.yaml ` since the vertices indices are different for SMPL and SMPLX.
+Thanks to David Pagnon for this contribution.
 
 ## Citation
 If you use this software, please cite the following work and software:
