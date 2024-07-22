@@ -25,7 +25,8 @@ if __name__ == "__main__":
     parser.add_argument('--smpl_markers_path', type=str, default=cg.bsm_markers_on_smpl_path, help='Path to SMPL markers')
     parser.add_argument('--body_model', help='Body model to use (smpl or smplx)', default='smpl', choices=['smpl', 'smplx'])
     parser.add_argument('--gender', type=str, default=None, choices=['female', 'male', 'neutral'])
-    
+    parser.add_argument('--z_up', action='store_true', help='Set the z axis up')
+     
     args = parser.parse_args()
     
     to_display = []
@@ -55,7 +56,7 @@ if __name__ == "__main__":
         fps_out=fps,
         name=f"{args.body_model.upper()} motion",
         show_joint_angles=False,
-        z_up=False
+        z_up=args.z_up
     )
     to_display.append(seq_smpl)
    
@@ -67,7 +68,8 @@ if __name__ == "__main__":
                                        color_skeleton_per_part=False, 
                                        show_joint_angles=False, 
                                        is_rigged=False,
-                                       ignore_geometry=True)
+                                       ignore_geometry=True,
+                                       z_up=args.z_up)
     
     to_display.append(osim_seq)
 
@@ -77,7 +79,8 @@ if __name__ == "__main__":
     synthetic_markers = SmplMarker(seq_smpl.vertices, markers_dict, fps=fps, name='Markers')
     markers_seq = Markers(synthetic_markers.marker_trajectory, markers_labels=synthetic_markers.marker_names, 
                           name='SMPL markers',
-                          color=(0, 1, 0, 1))
+                          color=(0, 1, 0, 1),
+                          z_up=args.z_up)
     to_display.append(markers_seq)
     
 
