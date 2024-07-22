@@ -146,7 +146,7 @@ if __name__ == '__main__':
     parser.add_argument('--osim', type=str, help='Path to a OpenSim model (.osim file)', default=cg.osim_model_path)
     parser.add_argument('--marker_dict', type=str, help='Path to a marker dictionary (.yaml file)', default=cg.bsm_markers_on_smpl_path)
     parser.add_argument('-o','--output_folder', type=str,help='Path to the output folder', default='./output')
-    parser.add_argument('-f','--force_recompute', action='store_true', help='Force recomputing the synthetic markers')
+    parser.add_argument('-F','--force_recompute', action='store_true', help='Force recomputing the synthetic markers')
     parser.add_argument('--osso', action='store_true', help='Gerenate personalized markers on the BSM template with the proper offsets to the bones, using OSSO.')
     parser.add_argument('-D','--display', action='store_true', help='If OSSO is used, display the result of the marker transfer.')
     
