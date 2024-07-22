@@ -31,7 +31,7 @@ def create_subj_json_and_mesh(smpl_data, model_type='smpl'):
     return subject_json
 
 
-def create_data_folder(subject_name, subject_trials, output_folder, osim_model_path=None, marker_dict_path=None, use_smplx=False, use_osso=False, force_recompute=False, display=True, no_confirm=False):
+def create_data_folder(subject_name, subject_trials, output_folder, osim_model_path=None, marker_dict_path=None, body_model='smpl', use_osso=False, force_recompute=False, display=True, no_confirm=False):
     """ Create the AdBiomechanics input data folder for a SMPL subject.
     Those data can be feed into AddBiomechanics to align an OpenSim Skeleton model to it.
     @param subject_name: name of the subject
@@ -50,20 +50,26 @@ def create_data_folder(subject_name, subject_trials, output_folder, osim_model_p
 
     # Generate subject_json with body measurements
     subject_json_file = os.path.join(subject_folder, '_subject.json')
-    model_type = 'smplx' if use_smplx else 'smpl'
     seq_data = load_smpl_seq(subject_trials[0]) # Load the first sequence
-    subject_json = create_subj_json_and_mesh(seq_data, model_type=model_type)
+    subject_json = create_subj_json_and_mesh(seq_data, model_type=body_model)
     print('Subject json: ', subject_json)
     json.dump(subject_json, open(subject_json_file, 'w'))
     print('Subject measurements saved as {}'.format(subject_json_file))
     
-    smpl_model = SMPL(gender = seq_data['gender'], model_type=model_type)
+    smpl_model = SMPL(gender = seq_data['gender'], model_type=body_model)
     
     # Select the marker set to use
     if osim_model_path == cg.osim_model_path and (marker_dict_path == cg.bsm_markers_on_smpl_path or marker_dict_path == cg.bsm_markers_on_smplx_path):
         # Use the default BSM model and marker set
         # from markers.marker_sets import bsm_marker_set
-        marker_set_name='bsm_smpl' if not use_smplx else 'bsm_smplx'
+        # marker_set_name='bsm_smpl' if not use_smplx else 'bsm_smplx'
+        if body_model == 'smpl':
+            marker_set_name = 'bsm_smpl'
+        elif body_model == 'smplx':
+            marker_set_name = 'bsm_smplx'
+        else:
+            raise ValueError(f"Unknown body model {body_model}")
+        
         with open(marker_dict_path, 'r') as yaml_file:
             markers_dict = yaml.safe_load(yaml_file)
         osso_segmentation = pickle.load(open(cg.bsm_osso_segmentation, 'rb'))
@@ -146,10 +152,10 @@ if __name__ == '__main__':
     parser.add_argument('-i', '--smpl_seq_folder', type=str, help='Path to the SMPL sequences folder', 
                         default='/is/cluster/work/mkeller2/Data/TML/AMASS/CMU/11')
     parser.add_argument('--osim', type=str, help='Path to a OpenSim model (.osim file)', default=cg.osim_model_path)
-    parser.add_argument('--marker_dict', type=str, help='Path to a marker dictionary (.yaml file)')
+    parser.add_argument('--marker_dict', type=str, help='Path to a marker dictionary (.yaml file)', default=None)
     parser.add_argument('-o','--output_folder', type=str,help='Path to the output folder', default='./output')
     parser.add_argument('-F','--force_recompute', action='store_true', help='Force recomputing the synthetic markers')
-    parser.add_argument('--smplx', action='store_true', help='Run on SMPL-X instead of SMPL+H files')
+    parser.add_argument('--body_model', help='Body model to use (smpl or smplx)', default='smpl', choices=['smpl', 'smplx'])
     parser.add_argument('--osso', action='store_true', help='Gerenate personalized markers on the BSM template with the proper offsets to the bones, using OSSO.')
     parser.add_argument('-D','--display', action='store_true', help='If OSSO is used, display the result of the marker transfer.')
     parser.add_argument('--no_confirm', action='store_true', help="Do not ask for confirmation after warning.")
@@ -164,14 +170,22 @@ if __name__ == '__main__':
     print(f"Found {len(subject_trials)} trials for subject {subject_name}")
 
     marker_dict_path = args.marker_dict
-    marker_dict_path = [marker_dict_path if marker_dict_path else [cg.bsm_markers_on_smplx_path if args.smplx else cg.bsm_markers_on_smpl_path][0]][0]
+    # marker_dict_path = [marker_dict_path if marker_dict_path else [cg.bsm_markers_on_smplx_path if args.smplx else cg.bsm_markers_on_smpl_path][0]][0]
+    if  marker_dict_path is None:
+        # marker_dict_path = cg.bsm_markers_on_smplx_path if args.smplx else cg.bsm_markers_on_smpl_path
+        if args.body_model == 'smplx':
+            marker_dict_path = cg.bsm_markers_on_smplx_path
+        elif args.body_model == 'smpl':
+            marker_dict_path = cg.bsm_markers_on_smpl_path
+        else:
+            raise ValueError(f"Unknown body model {args.body_model}")
 
     create_data_folder(subject_name=subject_name, 
                        subject_trials=subject_trials, 
                        output_folder=args.output_folder, 
                        osim_model_path=args.osim, 
                        marker_dict_path=marker_dict_path, 
-                       use_smplx=args.smplx, 
+                       body_model=args.body_model, 
                        use_osso=args.osso, 
                        force_recompute=args.force_recompute, 
                        display=args.display,
