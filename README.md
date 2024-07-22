@@ -8,7 +8,9 @@ This repository is part of the code release for the Siggraph Asia 2023 paper "Fr
 Given a [SMPL](https://smpl.is.tue.mpg.de/) body motion sequence as .npz or .pkl we enable getting  a scaled [OpenSim](https://simtk.org/projects/opensim) skeleton model (.osim) and the corresponding skeleton motion (.mot).
 
 
-<video src="assets/input_output.mp4" controls title="Input output illustration"></video>
+
+https://github.com/MarilynKeller/SMPL2AddBiomechanics/assets/102662583/95130620-4f62-4c41-a79a-dae3228d6951
+
 *Left: Input SMPL sequence   Right: Output OpenSim sequence*
 
 -----------
@@ -52,6 +54,14 @@ Download the file: SMPL_python_v.1.1.0.zip from the [SMPL download page](https:/
 cd ../SMPL2AddBiomechanics
 python scripts/setup_smpl.py /path/to/SMPL_python_v.1.1.0.zip  
 ```
+
+If you plan to use SMPL-X files rather than SMPL+H ones, also download the file: smplx_lockedhead_20230207.zip from the [SMPL-X download page](https://smpl-x.is.tue.mpg.de/). And run:
+
+```
+cd ../SMPL2AddBiomechanics
+python scripts/setup_smplx.py /path/to/smplx_lockedhead_20230207.zip  
+```
+
 
 ### BSM 
 
@@ -110,7 +120,8 @@ Once the process done, you can download the results (in this case 01.zip), extra
 
 This script shows the superimposition of the input SMPL sequences, the markers that were created in green, and the OpenSim skeleton aligned by AddBiomechanics.
 
-<video src="assets/superimp_res.mp4" controls title="Title"></video>
+https://github.com/MarilynKeller/SMPL2AddBiomechanics/assets/102662583/0995bd48-8ef7-4ed8-aaad-b92199f6ae3e
+
 
 ### Custom markers
 
@@ -195,7 +206,7 @@ If you use this software, please cite the following work and software:
 @inproceedings{keller2023skel,
   title = {From Skin to Skeleton: Towards Biomechanically Accurate 3D Digital Humans},
   author = {Keller, Marilyn and Werling, Keenon and Shin, Soyong and Delp, Scott and 
-            Pujades, Sergi and C. Karen, Liu and Black, Michael J.},
+            Pujades, Sergi and Liu, C. Karen and Black, Michael J.},
   booktitle = {ACM ToG, Proc.~SIGGRAPH Asia},
   volume = {42},
   number = {6},
