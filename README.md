@@ -41,7 +41,7 @@ If you are loooking for the SKEL model code, please check the [SKEL repository](
 
 ## Installation
 
-This repo was tested with python3.8
+This repo was tested with python3.8 on Ubuntu. It will not natively work on windows or without WSL as there are no nimblephysics wheels available on python for it.
 
 First, install the dependencies and the package with the following line:
 ```pip install -e .```
